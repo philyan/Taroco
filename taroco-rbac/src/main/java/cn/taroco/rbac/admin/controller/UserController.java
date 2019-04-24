@@ -1,11 +1,13 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.PermissionConst;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.vo.LoginUser;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequirePermission;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
 import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
@@ -49,6 +51,7 @@ public class UserController extends BaseController {
      * @return 用户名
      */
     @GetMapping("/info")
+    @RequirePermission(PermissionConst.ADMIN)
     public Response user(LoginUser loginUser) {
         final UserVO userVO = new UserVO();
         userVO.setUsername(loginUser.getUsername());

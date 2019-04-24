@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -53,5 +54,13 @@ public class SysRolePermissionServiceImpl
     @Override
     public Set<String> getRolePermissions(final Integer roleId) {
         return sysRolePermissionMapper.getRolePermissions(roleId);
+    }
+
+    @Override
+    public Set<String> getRolePermissions(final Set<Integer> roleIds) {
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return Collections.emptySet();
+        }
+        return sysRolePermissionMapper.getRolePermissionsBatch(roleIds);
     }
 }

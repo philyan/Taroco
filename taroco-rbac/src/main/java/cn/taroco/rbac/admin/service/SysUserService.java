@@ -25,7 +25,7 @@ public interface SysUserService extends IService<SysUser> {
     /**
      * 分页查询用户信息（含有角色信息）
      *
-     * @param query 查询条件
+     * @param query    查询条件
      * @param username 用户名称
      * @return
      */
@@ -41,12 +41,15 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 保存验证码
-     *  @param randomStr 随机串
-     * @param imageCode 验证码*/
+     *
+     * @param randomStr 随机串
+     * @param imageCode 验证码
+     */
     void saveImageCode(String randomStr, String imageCode);
 
     /**
      * 删除用户
+     *
      * @param sysUser 用户
      * @return boolean
      */
@@ -54,7 +57,8 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 更新当前用户基本信息
-     * @param userDto 用户信息
+     *
+     * @param userDto  用户信息
      * @param username 用户名
      * @return Boolean
      */
@@ -62,7 +66,8 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 更新指定用户信息
-     * @param userDto 用户信息
+     *
+     * @param userDto  用户信息
      * @param username 用户信息
      * @return
      */
@@ -70,6 +75,7 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 通过手机号查询用户信息
+     *
      * @param mobile 手机号
      * @return 用户信息
      */
@@ -77,6 +83,7 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 发送验证码
+     *
      * @param mobile 手机号
      * @return R
      */
@@ -84,6 +91,7 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 通过openId查询用户
+     *
      * @param openId openId
      * @return 用户信息
      */
@@ -91,6 +99,7 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 通过ID查询用户信息
+     *
      * @param id 用户ID
      * @return 用户信息
      */

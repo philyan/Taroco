@@ -1,6 +1,6 @@
 package cn.taroco.oauth2.server.feign;
 
-import cn.taroco.common.constants.ServiceNameConstants;
+import cn.taroco.common.constants.ServiceNameConst;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.oauth2.server.feign.fallback.UserServiceFallbackImpl;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author liuht
  * @date 2017/10/31
  */
-@FeignClient(name = ServiceNameConstants.RBAC_SERVICE, fallback = UserServiceFallbackImpl.class)
+@FeignClient(name = ServiceNameConst.RBAC_SERVICE, fallback = UserServiceFallbackImpl.class)
 public interface UserService {
     /**
      * 通过用户名查询用户、角色信息

@@ -1,5 +1,6 @@
 package cn.taroco.rbac.admin.service.impl;
 
+import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.entity.SysRoute;
 import cn.taroco.common.redis.template.TarocoRedisRepository;
@@ -35,7 +36,7 @@ public class SysRouteServiceImpl extends ServiceImpl<SysRouteMapper, SysRoute> i
         QueryWrapper<SysRoute> wrapper = new QueryWrapper<>();
         wrapper.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
         List<SysRoute> routeList = list(wrapper);
-        redisRepository.set(CommonConstant.ROUTE_KEY, JsonUtils.toJsonString(routeList));
+        redisRepository.set(CacheConstants.ROUTE_KEY, JsonUtils.toJsonString(routeList));
         return Boolean.TRUE;
     }
 }

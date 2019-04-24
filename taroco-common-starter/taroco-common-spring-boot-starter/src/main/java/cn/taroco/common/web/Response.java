@@ -43,6 +43,14 @@ public class Response implements Serializable {
         return response;
     }
 
+    public static Response failure(String errorCode, String errorMessage) {
+        Response response = new Response();
+        response.errorCode = errorCode;
+        response.errorMessage = errorMessage;
+        response.status = Status.FAILED;
+        return response;
+    }
+
     public static Response failure(IError error) {
         Response response = new Response();
         response.errorCode = error.getErrorCode();

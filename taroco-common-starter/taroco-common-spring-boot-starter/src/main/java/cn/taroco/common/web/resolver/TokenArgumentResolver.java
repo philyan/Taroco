@@ -1,4 +1,4 @@
-package cn.taroco.common.resolver;
+package cn.taroco.common.web.resolver;
 
 import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.vo.LoginUser;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Token转化UserVo
+ * Token转化LoginUser
  *
  * @author liuht
  * @date 2017/12/21
@@ -37,6 +37,8 @@ public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
+     * 入参处理
+     *
      * @param methodParameter       入参集合
      * @param modelAndViewContainer model 和 view
      * @param nativeWebRequest      web相关
@@ -50,7 +52,7 @@ public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
                                   WebDataBinderFactory webDataBinderFactory) {
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         String username = request.getHeader(SecurityConstants.USER_HEADER);
-        String roles = request.getHeader(SecurityConstants.ROLE_HEADER);
+        String roles = request.getHeader(SecurityConstants.USER_ROLE_HEADER);
         if (StrUtil.isBlank(username) || StrUtil.isBlank(roles)) {
             log.warn("resolveArgument error username or role is empty");
             return null;

@@ -1,5 +1,6 @@
 package cn.taroco.rbac.admin.service.impl;
 
+import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.vo.SysRole;
@@ -31,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author liuht
@@ -67,9 +69,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         List<String> roleNames = new ArrayList<>();
         if (!CollectionUtils.isEmpty(roleList)) {
             for (SysRole sysRole : roleList) {
-                if (!org.apache.commons.lang3.StringUtils.equals(SecurityConstants.BASE_ROLE, sysRole.getRoleName())) {
-                    roleNames.add(sysRole.getRoleName());
-                }
+                roleNames.add(sysRole.getRoleName());
             }
         }
         String[] roles = roleNames.toArray(new String[roleNames.size()]);
@@ -86,7 +86,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public UserVO findUserByUsername(String username) {
-        return sysUserMapper.selectUserVoByUsername(username);
+        final UserVO userVO = sysUserMapper.selectUserVoByUsername(username);
+        if (userVO == null) {
+            return null;
+        }
+        final List<SysRole> roleList = userVO.getRoleList();
+        if (!CollectionUtils.isEmpty(roleList)) {
+            userVO.setPermissions(sysRolePermissionService
+                    .getRolePermissions(roleList.stream().map(SysRole::getRoleId).collect(Collectors.toSet())));
+        }
+        return userVO;
     }
 
     /**
@@ -135,7 +144,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public void saveImageCode(String randomStr, String imageCode) {
-        redisTemplate.opsForValue().set(SecurityConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(CacheConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
     }
 
     /**
@@ -151,7 +160,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public Response sendSmsCode(String mobile) {
-        Object tempCode = redisTemplate.opsForValue().get(SecurityConstants.DEFAULT_CODE_KEY + mobile);
+        Object tempCode = redisTemplate.opsForValue().get(CacheConstants.DEFAULT_CODE_KEY + mobile);
         if (tempCode != null) {
             log.error("用户:{}验证码未失效{}", mobile, tempCode);
             return Response.failure("验证码未失效，请失效后再次申请");
@@ -170,7 +179,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         log.info("短信发送请求消息中心 -> 手机号:{} -> 验证码：{}", mobile, code);
         redisTemplate
                 .opsForValue()
-                .set(SecurityConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+                .set(CacheConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
         return Response.success(true);
     }
 

@@ -1,13 +1,11 @@
 package cn.taroco.common.ribbon;
 
-import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.SecurityConstants;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-
-import static cn.taroco.common.constants.CommonConstant.HEADER_LABEL;
 
 /**
  * Feign请求拦截器
@@ -26,8 +24,8 @@ public class XlabelFeignHeaderInterceptor implements RequestInterceptor {
         if (!HystrixRequestContext.isCurrentThreadInitialized()) {
             HystrixRequestContext.initializeContext();
         }
-        String header = StringUtils.collectionToDelimitedString(XlabelMvcHeaderInterceptor.LABEL.get(), CommonConstant.HEADER_LABEL_SPLIT);
+        String header = StringUtils.collectionToDelimitedString(XlabelMvcHeaderInterceptor.LABEL.get(), SecurityConstants.HEADER_LABEL_SPLIT);
         log.debug("Pass x-label by feign: " + header);
-        template.header(HEADER_LABEL, header);
+        template.header(SecurityConstants.HEADER_LABEL, header);
     }
 }

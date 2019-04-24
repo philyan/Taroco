@@ -8,22 +8,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author liuht
  * @date 2017/11/17 11:36
  */
-@ConfigurationProperties(prefix = "taroco.resttemplate", ignoreUnknownFields = true)
+@ConfigurationProperties(prefix = "taroco.resttemplate")
 public class TarocoRestTemplateProperties {
     /**
-     * 最大链接数
+     * max connection default: 200
      */
     private int maxTotal = 200;
     /**
-     * 同路由最大并发数
+     * default: 20
      */
     private int maxPerRoute = 20;
     /**
-     * 读取超时时间 ms
+     * default: 35000(ms)
      */
     private int readTimeout = 35000;
     /**
-     * 链接超时时间 ms
+     * default: 10000(ms)
      */
     private int connectTimeout = 10000;
 

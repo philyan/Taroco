@@ -6,7 +6,7 @@ package cn.taroco.common.constants;
  * @author liuht
  * @date 2018/7/27 13:50
  */
-public interface ServiceNameConstants {
+public interface ServiceNameConst {
 
     /**
      * 用户权限服务

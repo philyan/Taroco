@@ -1,6 +1,6 @@
 package cn.taroco.common.ribbon;
 
-import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.SecurityConstants;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
@@ -29,9 +29,9 @@ public class XlabelHttpclientRequestInterceptor implements ClientHttpRequestInte
         }
 
         HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
-        String header = StringUtils.collectionToDelimitedString(XlabelMvcHeaderInterceptor.LABEL.get(), CommonConstant.HEADER_LABEL_SPLIT);
+        String header = StringUtils.collectionToDelimitedString(XlabelMvcHeaderInterceptor.LABEL.get(), SecurityConstants.HEADER_LABEL_SPLIT);
         log.debug("Pass x-label by httpclient: " + header);
-        requestWrapper.getHeaders().add(CommonConstant.HEADER_LABEL, header);
+        requestWrapper.getHeaders().add(SecurityConstants.HEADER_LABEL, header);
 
         return execution.execute(requestWrapper, body);
     }

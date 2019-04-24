@@ -1,9 +1,7 @@
 package cn.taroco.oauth2.server.controller;
 
-import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.web.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,13 +50,12 @@ public class AuthenticationController {
     }
 
     /**
-     * 清除Redis中 accesstoken refreshtoken
+     * 清除 accesstoken
      *
      * @param accesstoken accesstoken
      * @return true/false
      */
     @PostMapping("/removeToken")
-    @CacheEvict(value = SecurityConstants.TOKEN_USER_DETAIL, key = "#accesstoken")
     public Response removeToken(String accesstoken) {
         return Response.success(consumerTokenServices.revokeToken(accesstoken));
     }

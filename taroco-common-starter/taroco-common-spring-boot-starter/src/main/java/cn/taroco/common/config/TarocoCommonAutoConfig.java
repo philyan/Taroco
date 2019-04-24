@@ -1,8 +1,9 @@
 package cn.taroco.common.config;
 
 import cn.taroco.common.exception.DefaultExceptionAdvice;
-import cn.taroco.common.resolver.TokenArgumentResolver;
-import cn.taroco.common.utils.RequestPerformanceFilter;
+import cn.taroco.common.web.interceptor.PermissionInterceptor;
+import cn.taroco.common.web.resolver.TokenArgumentResolver;
+import cn.taroco.common.web.filter.RequestPerformanceFilter;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -10,6 +11,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.validation.Validation;
@@ -33,6 +35,11 @@ public class TarocoCommonAutoConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new TokenArgumentResolver());
+    }
+
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(new PermissionInterceptor());
     }
 
     @Bean

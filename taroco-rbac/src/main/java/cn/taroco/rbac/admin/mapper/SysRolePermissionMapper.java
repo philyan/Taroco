@@ -27,6 +27,26 @@ public interface SysRolePermissionMapper extends BaseMapper<SysRolePermission> {
             "\tsys_role_permission rp\n" +
             "LEFT JOIN sys_permission p ON rp.permission_id = p.id\n" +
             "WHERE\n" +
-            "\trp.role_id = 1")
+            "\trp.role_id = #{roleId}")
     Set<String> getRolePermissions(@Param("roleId") Integer roleId);
+
+    /**
+     * 查询角色权限
+     *
+     * @param roleIds 角色ID
+     * @return
+     */
+    @Select("<script>" +
+            "SELECT\n" +
+            "\tp.`code`\n" +
+            "FROM\n" +
+            "\tsys_role_permission rp\n" +
+            "LEFT JOIN sys_permission p ON rp.permission_id = p.id\n" +
+            "WHERE\n" +
+            "\trp.role_id in" +
+            "<foreach item='item' index='index' collection='roleIds' open='(' separator=',' close=')'> " +
+            "#{item}" +
+            "</foreach>" +
+            "</script>")
+    Set<String> getRolePermissionsBatch(@Param("roleIds") final Set<Integer> roleIds);
 }

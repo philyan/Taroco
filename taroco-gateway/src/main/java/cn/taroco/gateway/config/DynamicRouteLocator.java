@@ -1,6 +1,6 @@
 package cn.taroco.gateway.config;
 
-import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.entity.SysRoute;
 import cn.taroco.common.redis.template.TarocoRedisRepository;
 import com.alibaba.fastjson.JSONArray;
@@ -72,7 +72,7 @@ public class DynamicRouteLocator extends DiscoveryClientRouteLocator {
     private Map<String, ZuulProperties.ZuulRoute> locateRoutesFromCache() {
         Map<String, ZuulProperties.ZuulRoute> routes = new LinkedHashMap<>();
 
-        String vals = redisRepository.get(CommonConstant.ROUTE_KEY);
+        String vals = redisRepository.get(CacheConstants.ROUTE_KEY);
         if (vals == null) {
             return routes;
         }

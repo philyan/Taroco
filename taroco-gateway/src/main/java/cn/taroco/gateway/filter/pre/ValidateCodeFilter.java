@@ -1,5 +1,6 @@
 package cn.taroco.gateway.filter.pre;
 
+import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.exception.ValidateCodeException;
 import cn.taroco.common.web.Response;
@@ -111,7 +112,7 @@ public class ValidateCodeFilter extends ZuulFilter {
             randomStr = httpServletRequest.getParameter("mobile");
         }
 
-        final String key = SecurityConstants.DEFAULT_CODE_KEY + randomStr;
+        final String key = CacheConstants.DEFAULT_CODE_KEY + randomStr;
         if (!redisTemplate.hasKey(key)) {
             throw new ValidateCodeException(EXPIRED_CAPTCHA_ERROR);
         }

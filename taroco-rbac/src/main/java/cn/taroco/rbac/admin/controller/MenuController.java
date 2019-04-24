@@ -57,7 +57,7 @@ public class MenuController extends BaseController {
      * @return 当前用户的树形菜单
      */
     @GetMapping(value = "/userMenu")
-    public List<MenuTree> userMenu(@RequestHeader(name = SecurityConstants.ROLE_HEADER) String roles) {
+    public List<MenuTree> userMenu(@RequestHeader(name = SecurityConstants.USER_ROLE_HEADER) String roles) {
         if (StringUtils.isEmpty(roles)) {
             return Collections.emptyList();
         }

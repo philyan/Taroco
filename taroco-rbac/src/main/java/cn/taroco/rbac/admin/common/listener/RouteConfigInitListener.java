@@ -1,5 +1,6 @@
 package cn.taroco.rbac.admin.common.listener;
 
+import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.entity.SysRoute;
 import cn.taroco.common.redis.template.TarocoRedisRepository;
@@ -41,7 +42,7 @@ public class RouteConfigInitListener implements ApplicationListener<ApplicationS
         wrapper.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
         List<SysRoute> routeList = sysRouteService.list(wrapper);
         if (!CollectionUtils.isEmpty(routeList)) {
-            redisRepository.set(CommonConstant.ROUTE_KEY, JsonUtils.toJsonString(routeList));
+            redisRepository.set(CacheConstants.ROUTE_KEY, JsonUtils.toJsonString(routeList));
             log.info("更新Redis中路由配置数据：{}条", routeList.size());
         }
         log.info("初始化路由配置数据完毕");

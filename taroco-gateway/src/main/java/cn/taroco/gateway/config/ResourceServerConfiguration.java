@@ -2,6 +2,7 @@ package cn.taroco.gateway.config;
 
 import cn.taroco.common.config.TarocoOauth2Properties;
 import cn.taroco.gateway.handler.TarocoAccessDeniedHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableResourceServer
 @EnableConfigurationProperties(TarocoOauth2Properties.class)
+@Slf4j
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
     private static final String PUBLIC_KEY = "pubkey.txt";
@@ -79,7 +81,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             return br.lines().collect(Collectors.joining("\n"));
         } catch (IOException ioe) {
-            return getKeyFromAuthorizationServer();
+            try {
+                return getKeyFromAuthorizationServer();
+            } catch (Exception e) {
+                log.error("Get Public Key From Authorization Server Failed.", e);
+                throw new IllegalStateException("Get Public Key From Authorization Server Failed.", e);
+            }
         }
     }
 
@@ -110,6 +117,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
                 .authorizeRequests();
         oauth2Properties.getUrlPermitAll().forEach(url -> registry.antMatchers(url).permitAll());
+        // 角色和权限的验证交给拦截器去做, 这里只判断是否登录
         registry.anyRequest()
                 .access("@permissionService.hasPermission(request, authentication)");
     }

@@ -1,7 +1,6 @@
 package cn.taroco.oauth2.server.userdetails;
 
 import cn.taroco.common.constants.CommonConstant;
-import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.vo.SysRole;
 import cn.taroco.common.vo.UserVO;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 扩展UserDetails信息 满足业务需求
@@ -19,7 +19,7 @@ import java.util.List;
  * @author liuht
  * @date 2017/10/29
  */
-public class UserDetailsImpl implements UserDetails {
+public class MyUserDetails implements UserDetails {
     private static final long serialVersionUID = 1L;
     private Integer userId;
     private String username;
@@ -27,24 +27,24 @@ public class UserDetailsImpl implements UserDetails {
     private String status;
     private String label;
     private List<SysRole> roleList;
+    private Set<String> permissions;
 
-    public UserDetailsImpl(UserVO userVo) {
+    public MyUserDetails(UserVO userVo) {
         this.userId = userVo.getUserId();
         this.username = userVo.getUsername();
         this.password = userVo.getPassword();
         this.status = userVo.getDelFlag();
         this.label = userVo.getLabel();
-        roleList = userVo.getRoleList();
+        this.roleList = userVo.getRoleList();
+        this.permissions = userVo.getPermissions();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorityList = new ArrayList<>();
+        final List<GrantedAuthority> authorityList = new ArrayList<>();
         for (SysRole role : roleList) {
             authorityList.add(new SimpleGrantedAuthority(role.getRoleCode()));
         }
-        // 为每一个用户添加一个基本角色
-        authorityList.add(new SimpleGrantedAuthority(SecurityConstants.BASE_ROLE));
         return authorityList;
     }
 
@@ -112,5 +112,13 @@ public class UserDetailsImpl implements UserDetails {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public void setPermissions(final Set<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    public Set<String> getPermissions() {
+        return permissions;
     }
 }

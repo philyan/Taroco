@@ -39,7 +39,6 @@ public class TarocoOauth2Properties {
     private KeyStore keyStore = new KeyStore();
 
     @Data
-    @ConfigurationProperties("encrypt")
     public static class KeyStore {
 
         /**

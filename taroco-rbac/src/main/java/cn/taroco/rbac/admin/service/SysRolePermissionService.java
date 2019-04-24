@@ -30,4 +30,12 @@ public interface SysRolePermissionService extends IService<SysRolePermission> {
      * @return
      */
     Set<String> getRolePermissions(Integer roleId);
+
+    /**
+     * 查询角色权限
+     *
+     * @param roleIds 角色ID
+     * @return
+     */
+    Set<String> getRolePermissions(Set<Integer> roleIds);
 }

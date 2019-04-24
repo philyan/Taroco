@@ -1,9 +1,9 @@
 package cn.taroco.oauth2.server.config;
 
 import cn.taroco.common.config.TarocoOauth2Properties;
-import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.SecurityConstants;
-import cn.taroco.oauth2.server.userdetails.UserDetailsImpl;
+import cn.taroco.oauth2.server.userdetails.MyUserDetails;
+import com.xiaoleilu.hutool.collection.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +29,6 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 import javax.sql.DataSource;
 import java.security.KeyPair;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +38,7 @@ import java.util.Map;
  * @date 2018/7/24 16:10
  */
 @Configuration
-@EnableConfigurationProperties({TarocoOauth2Properties.class})
+@EnableConfigurationProperties( {TarocoOauth2Properties.class})
 @EnableAuthorizationServer
 public class AuthorizationServerConfigration extends AuthorizationServerConfigurerAdapter {
 
@@ -60,6 +59,11 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
         return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
+    /**
+     * JWT Token 生成转换器（加密方式以及加密的Token中存放哪些信息）
+     *
+     * @return
+     */
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
@@ -67,31 +71,34 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
                 (oauth2Properties.getKeyStore().getLocation(), oauth2Properties.getKeyStore().getSecret().toCharArray())
                 .getKeyPair(oauth2Properties.getKeyStore().getAlias());
         converter.setKeyPair(keyPair);
+        converter.setAccessTokenConverter(new CustomerAccessTokenConverter());
         return converter;
     }
 
     /**
      * jwt 生成token 定制化处理
-     *
-     * 添加一些额外的用户信息到token里面
+     * <p>
+     * 额外信息（这部分信息不关乎加密方式）, 添加到随token一起的additionalInformation当中
      *
      * @return TokenEnhancer
      */
     @Bean
     public TokenEnhancer tokenEnhancer() {
         return (accessToken, authentication) -> {
-            final Map<String, Object> additionalInfo = new HashMap<>(2);
-            additionalInfo.put("license", SecurityConstants.LICENSE);
+            final Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
             final Object principal = authentication.getUserAuthentication().getPrincipal();
-            UserDetailsImpl user;
-            if (principal instanceof UserDetailsImpl) {
-                user = (UserDetailsImpl) principal;
+            MyUserDetails user;
+            if (principal instanceof MyUserDetails) {
+                user = (MyUserDetails) principal;
             } else {
                 final String username = (String) principal;
-                user = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
+                user = (MyUserDetails) userDetailsService.loadUserByUsername(username);
             }
-            additionalInfo.put("userId", user.getUserId());
-            additionalInfo.put(CommonConstant.HEADER_LABEL, user.getLabel());
+            additionalInfo.put(SecurityConstants.LICENSE_KEY, SecurityConstants.LICENSE);
+            additionalInfo.put(SecurityConstants.USER_HEADER, user.getUsername());
+            additionalInfo.put(SecurityConstants.HEADER_LABEL, user.getLabel());
+            additionalInfo.put(SecurityConstants.USER_ROLE_HEADER, CollectionUtil.join(user.getAuthorities(), ","));
+            additionalInfo.put(SecurityConstants.USER_PERMISSION_HEADER, CollectionUtil.join(user.getPermissions(), ","));
             ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
             return accessToken;
         };

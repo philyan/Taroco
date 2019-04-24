@@ -1,6 +1,5 @@
 package cn.taroco.gateway.filter.pre;
 
-import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.SecurityConstants;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -17,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+import java.util.Map;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.FORM_BODY_WRAPPER_FILTER_ORDER;
 
@@ -52,18 +52,18 @@ public class UserInfoHeaderFilter extends ZuulFilter {
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
-        ctx.set("startTime", System.currentTimeMillis());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             RequestContext requestContext = RequestContext.getCurrentContext();
             requestContext.addZuulRequestHeader(SecurityConstants.USER_HEADER, authentication.getName());
-            requestContext.addZuulRequestHeader(SecurityConstants.ROLE_HEADER, CollectionUtil.join(authentication.getAuthorities(), ","));
+            requestContext.addZuulRequestHeader(SecurityConstants.USER_ROLE_HEADER, CollectionUtil.join(authentication.getAuthorities(), ","));
             String tokenValue = extractToken(request);
             if (!StringUtils.isEmpty(tokenValue)) {
                 OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
                 if (accessToken != null && !CollectionUtils.isEmpty(accessToken.getAdditionalInformation())) {
-                    requestContext.addZuulRequestHeader(CommonConstant.HEADER_LABEL, accessToken.getAdditionalInformation
-                            ().get(CommonConstant.HEADER_LABEL) + "");
+                    Map<String, Object> information = accessToken.getAdditionalInformation();
+                    requestContext.addZuulRequestHeader(SecurityConstants.HEADER_LABEL, information.get(SecurityConstants.HEADER_LABEL) + "");
+                    requestContext.addZuulRequestHeader(SecurityConstants.USER_PERMISSION_HEADER, information.get(SecurityConstants.USER_PERMISSION_HEADER) + "");
                 }
             }
         }
@@ -90,7 +90,7 @@ public class UserInfoHeaderFilter extends ZuulFilter {
      * @return The token, or null if no OAuth authorization header was supplied.
      */
     private String extractHeaderToken(HttpServletRequest request) {
-        Enumeration<String> headers = request.getHeaders(CommonConstant.TOKEN_HEADER);
+        Enumeration<String> headers = request.getHeaders(SecurityConstants.TOKEN_HEADER);
         while (headers.hasMoreElements()) {
             String value = headers.nextElement();
             if ((value.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase()))) {
@@ -102,7 +102,6 @@ public class UserInfoHeaderFilter extends ZuulFilter {
                 return authHeaderValue;
             }
         }
-
         return null;
     }
 }

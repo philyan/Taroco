@@ -1,15 +1,12 @@
 package cn.taroco.gateway.service.impl;
 
 import cn.taroco.gateway.service.PermissionService;
-import com.xiaoleilu.hutool.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 请求权限判断service
@@ -28,16 +25,7 @@ public class PermissionServiceImpl implements PermissionService {
         if (HttpMethod.OPTIONS.name().equalsIgnoreCase(request.getMethod())) {
             return true;
         }
-        Object principal = authentication.getPrincipal();
-        List<SimpleGrantedAuthority> grantedAuthorityList = (List<SimpleGrantedAuthority>) authentication.getAuthorities();
-        // TODO 权限拦截需要重写
-        boolean hasPermission = true;
-
-        if (principal != null) {
-            if (CollectionUtil.isEmpty(grantedAuthorityList)) {
-                log.warn("角色列表为空：{}", authentication.getPrincipal());
-            }
-        }
-        return hasPermission;
+        // 角色和权限的验证交给拦截器去做, 这里只判断是否登录
+        return authentication.isAuthenticated();
     }
 }
