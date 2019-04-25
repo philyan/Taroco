@@ -78,7 +78,6 @@ public class LogController extends BaseController {
      * @param result 错误信息
      */
     @PostMapping
-    @RequireRole(RoleConst.ADMIN)
     public void add(@Valid @RequestBody SysLog log, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result.getAllErrors().get(0).getDefaultMessage());

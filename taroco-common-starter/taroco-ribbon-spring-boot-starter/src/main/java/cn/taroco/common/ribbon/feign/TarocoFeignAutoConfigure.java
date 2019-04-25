@@ -1,4 +1,4 @@
-package cn.taroco.common.ribbon;
+package cn.taroco.common.ribbon.feign;
 
 import feign.Logger;
 import org.springframework.context.annotation.Bean;
@@ -24,5 +24,15 @@ public class TarocoFeignAutoConfigure {
     @Bean
     public XlabelFeignHeaderInterceptor xlabelFeignHeaderInterceptor() {
         return new XlabelFeignHeaderInterceptor();
+    }
+
+    @Bean
+    public RequestHeaderInterceptor requestHeaderInterceptor() {
+        return new RequestHeaderInterceptor();
+    }
+
+    @Bean
+    public RequestAttributeHystrixConcurrencyStrategy hystrixRequestAutoConfiguration() {
+        return new RequestAttributeHystrixConcurrencyStrategy();
     }
 }

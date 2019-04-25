@@ -51,10 +51,10 @@ public class PreRequestLogFilter extends ZuulFilter {
 
     @Override
     public Object run() {
-        final RequestContext ctx = RequestContext.getCurrentContext();
-        final HttpServletRequest request = ctx.getRequest();
+        final RequestContext requestContext = RequestContext.getCurrentContext();
+        final HttpServletRequest request = requestContext.getRequest();
         log.info(String.format("send %s request to %s", request.getMethod(), request.getRequestURL().toString()));
-        addLog(request, ctx);
+        addLog(request, requestContext);
         return null;
     }
 
@@ -62,9 +62,9 @@ public class PreRequestLogFilter extends ZuulFilter {
      * 添加系统日志
      *
      * @param request 请求对象
-     * @param ctx     RequestContext
+     * @param requestContext     RequestContext
      */
-    private void addLog(HttpServletRequest request, RequestContext ctx) {
+    private void addLog(HttpServletRequest request, RequestContext requestContext) {
         final SysLog log = new SysLog();
         log.setCreateTime(new Date());
         log.setRemoteAddr(request.getRemoteAddr());
@@ -84,7 +84,7 @@ public class PreRequestLogFilter extends ZuulFilter {
                 // 记录操作日志
                 log.setType(LogType.Operation.name());
                 log.setTitle(LogType.Operation.name());
-                log.setCreateBy(ctx.getZuulRequestHeaders().get(SecurityConstants.USER_HEADER));
+                log.setCreateBy(requestContext.getZuulRequestHeaders().get(SecurityConstants.USER_HEADER));
                 logService.add(log);
             }
         }

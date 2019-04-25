@@ -1,6 +1,7 @@
-package cn.taroco.common.ribbon;
+package cn.taroco.common.ribbon.feign;
 
 import cn.taroco.common.constants.SecurityConstants;
+import cn.taroco.common.ribbon.XlabelMvcHeaderInterceptor;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
