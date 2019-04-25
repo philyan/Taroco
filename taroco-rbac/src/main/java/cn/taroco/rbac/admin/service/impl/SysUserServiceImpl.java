@@ -2,6 +2,7 @@ package cn.taroco.rbac.admin.service.impl;
 
 import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.constants.SecurityConstants;
+import cn.taroco.common.redis.template.TarocoRedisRepository;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.vo.SysRole;
 import cn.taroco.common.vo.UserVO;
@@ -20,7 +21,6 @@ import com.xiaoleilu.hutool.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +44,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private TarocoRedisRepository redisRepository;
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -144,7 +143,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public void saveImageCode(String randomStr, String imageCode) {
-        redisTemplate.opsForValue().set(CacheConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+        redisRepository.setExpire(CacheConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE);
     }
 
     /**
@@ -160,7 +159,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public Response sendSmsCode(String mobile) {
-        Object tempCode = redisTemplate.opsForValue().get(CacheConstants.DEFAULT_CODE_KEY + mobile);
+        Object tempCode = redisRepository.get(CacheConstants.DEFAULT_CODE_KEY + mobile);
         if (tempCode != null) {
             log.error("用户:{}验证码未失效{}", mobile, tempCode);
             return Response.failure("验证码未失效，请失效后再次申请");
@@ -177,9 +176,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         String code = RandomUtil.randomNumbers(4);
         log.info("短信发送请求消息中心 -> 手机号:{} -> 验证码：{}", mobile, code);
-        redisTemplate
-                .opsForValue()
-                .set(CacheConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+        redisRepository.setExpire(CacheConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE);
         return Response.success(true);
     }
 

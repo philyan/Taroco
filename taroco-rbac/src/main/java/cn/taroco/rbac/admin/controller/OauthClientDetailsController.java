@@ -1,8 +1,10 @@
 package cn.taroco.rbac.admin.controller;
 
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.entity.SysOauthClientDetails;
 import cn.taroco.rbac.admin.service.SysOauthClientDetailsService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -45,6 +47,7 @@ public class OauthClientDetailsController extends BaseController {
      * @return SysOauthClientDetails
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public SysOauthClientDetails get(@PathVariable Integer id) {
         return sysOauthClientDetailsService.getById(id);
     }
@@ -57,6 +60,7 @@ public class OauthClientDetailsController extends BaseController {
      * @return 分页对象
      */
     @GetMapping("/page")
+    @RequireRole(RoleConst.ADMIN)
     public Page page(@RequestParam Map<String, Object> params) {
         return (Page) sysOauthClientDetailsService.page(new Query<>(params));
     }
@@ -68,6 +72,7 @@ public class OauthClientDetailsController extends BaseController {
      * @return success/false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response add(@RequestBody SysOauthClientDetails client) {
         if (StringUtils.isEmpty(client.getAdditionalInformation())) {
             client.setAdditionalInformation(null);
@@ -84,6 +89,7 @@ public class OauthClientDetailsController extends BaseController {
      * @return success/false
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response delete(@PathVariable String id) {
         return Response.success(sysOauthClientDetailsService.removeById(id));
     }
@@ -95,6 +101,7 @@ public class OauthClientDetailsController extends BaseController {
      * @return success/false
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response edit(@RequestBody SysOauthClientDetails client) {
         final String pass = client.getClientSecret();
         final SysOauthClientDetails details = sysOauthClientDetailsService.getById(client.getClientId());

@@ -1,13 +1,13 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
-import cn.taroco.common.constants.PermissionConst;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.vo.LoginUser;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
-import cn.taroco.common.web.annotation.RequirePermission;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
 import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
@@ -51,7 +51,6 @@ public class UserController extends BaseController {
      * @return 用户名
      */
     @GetMapping("/info")
-    @RequirePermission(PermissionConst.ADMIN)
     public Response user(LoginUser loginUser) {
         final UserVO userVO = new UserVO();
         userVO.setUsername(loginUser.getUsername());
@@ -67,6 +66,7 @@ public class UserController extends BaseController {
      * @return 用户信息
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public UserVO user(@PathVariable Integer id) {
         return userService.selectUserVoById(id);
     }
@@ -78,6 +78,7 @@ public class UserController extends BaseController {
      * @return R
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response userDel(@PathVariable Integer id) {
         SysUser sysUser = userService.getById(id);
         if (CommonConstant.ADMIN_USER_NAME.equals(sysUser.getUsername())) {
@@ -93,6 +94,7 @@ public class UserController extends BaseController {
      * @return success/false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response user(@Valid @RequestBody UserDTO userDto) {
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(userDto, sysUser);
@@ -109,6 +111,7 @@ public class UserController extends BaseController {
      * @return R
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response userUpdate(@Valid @RequestBody UserDTO userDto) {
         SysUser user = userService.getById(userDto.getUserId());
         return Response.success(userService.updateUser(userDto, user.getUsername()));
@@ -154,6 +157,7 @@ public class UserController extends BaseController {
      * @return 用户集合
      */
     @GetMapping("/userPage")
+    @RequireRole(RoleConst.ADMIN)
     public IPage<UserVO> userPage(@RequestParam Map<String, Object> params) {
         return userService.selectPage(new Query(params), (String) params.get("username"));
     }
@@ -166,6 +170,7 @@ public class UserController extends BaseController {
      * @return success/false
      */
     @PutMapping("/editInfo")
+    @RequireRole(RoleConst.ADMIN)
     public Response editInfo(@Valid @RequestBody UserDTO userDto, LoginUser loginUser) {
         return userService.updateUserInfo(userDto, loginUser.getUsername());
     }

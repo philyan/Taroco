@@ -1,10 +1,12 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.vo.MenuVO;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.common.util.TreeUtil;
 import cn.taroco.rbac.admin.model.dto.MenuTree;
 import cn.taroco.rbac.admin.model.entity.SysMenu;
@@ -47,6 +49,7 @@ public class MenuController extends BaseController {
      * @return 菜单列表
      */
     @GetMapping("/findMenuByRole/{role}")
+    @RequireRole(RoleConst.ADMIN)
     public List<MenuVO> findMenuByRole(@PathVariable String role) {
         return sysMenuService.findMenuByRoleName(role);
     }
@@ -57,6 +60,7 @@ public class MenuController extends BaseController {
      * @return 当前用户的树形菜单
      */
     @GetMapping(value = "/userMenu")
+    @RequireRole(RoleConst.ADMIN)
     public List<MenuTree> userMenu(@RequestHeader(name = SecurityConstants.USER_ROLE_HEADER) String roles) {
         if (StringUtils.isEmpty(roles)) {
             return Collections.emptyList();
@@ -78,6 +82,7 @@ public class MenuController extends BaseController {
      * @return 树形菜单
      */
     @GetMapping(value = "/allTree")
+    @RequireRole(RoleConst.ADMIN)
     public List<MenuTree> getTree() {
         SysMenu condition = new SysMenu();
         condition.setDelFlag(CommonConstant.STATUS_NORMAL);
@@ -91,6 +96,7 @@ public class MenuController extends BaseController {
      * @return 属性集合
      */
     @GetMapping("/roleTree/{roleName}")
+    @RequireRole(RoleConst.ADMIN)
     public List<Integer> roleTree(@PathVariable String roleName) {
         List<MenuVO> menus = sysMenuService.findMenuByRoleName(roleName);
         List<Integer> menuList = new ArrayList<>();
@@ -107,6 +113,7 @@ public class MenuController extends BaseController {
      * @return 菜单详细信息
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public SysMenu menu(@PathVariable Integer id) {
         return sysMenuService.getById(id);
     }
@@ -118,6 +125,7 @@ public class MenuController extends BaseController {
      * @return success/false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response menu(@RequestBody SysMenu sysMenu) {
         return Response.success(sysMenuService.save(sysMenu));
     }
@@ -129,11 +137,13 @@ public class MenuController extends BaseController {
      * @return success/false
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response menuDel(@PathVariable Integer id) {
         return Response.success(sysMenuService.deleteMenu(id));
     }
 
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response menuUpdate(@RequestBody SysMenu sysMenu) {
         return Response.success(sysMenuService.updateMenuById(sysMenu));
     }

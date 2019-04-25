@@ -21,6 +21,7 @@ import java.util.*;
  * redis 基本操作 可扩展,基本够用了
  * @author liuht
  */
+@SuppressWarnings("ConstantConditions")
 @Slf4j
 public class TarocoRedisRepository {
 
@@ -349,7 +350,6 @@ public class TarocoRedisRepository {
     public boolean exists(final String key) {
         return redisTemplate.execute((RedisCallback<Boolean>) connection -> connection.exists(key.getBytes(DEFAULT_CHARSET)));
     }
-
 
     /**
      * 删除key

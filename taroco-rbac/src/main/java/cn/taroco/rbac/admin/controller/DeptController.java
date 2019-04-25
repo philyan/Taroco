@@ -1,7 +1,9 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.web.BaseController;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.dto.DeptTree;
 import cn.taroco.rbac.admin.model.entity.SysDept;
 import cn.taroco.rbac.admin.service.SysDeptService;
@@ -40,6 +42,7 @@ public class DeptController extends BaseController {
      * @return SysDept
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public SysDept get(@PathVariable Integer id) {
         return sysDeptService.getById(id);
     }
@@ -51,6 +54,7 @@ public class DeptController extends BaseController {
      * @return 返回所有部门列表
      */
     @GetMapping(value = "/list")
+    @RequireRole(RoleConst.ADMIN)
     public List<SysDept> getAllList() {
         SysDept condition = new SysDept();
         condition.setDelFlag(CommonConstant.STATUS_NORMAL);
@@ -63,6 +67,7 @@ public class DeptController extends BaseController {
      * @return 树形部门
      */
     @GetMapping(value = "/tree")
+    @RequireRole(RoleConst.ADMIN)
     public List<DeptTree> getTree() {
         SysDept condition = new SysDept();
         condition.setDelFlag(CommonConstant.STATUS_NORMAL);
@@ -76,6 +81,7 @@ public class DeptController extends BaseController {
      * @return success/false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Boolean add(@RequestBody SysDept sysDept) {
         return sysDeptService.insertDept(sysDept);
     }
@@ -87,6 +93,7 @@ public class DeptController extends BaseController {
      * @return success/false
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Boolean delete(@PathVariable Integer id) {
         return sysDeptService.deleteDeptById(id);
     }
@@ -98,6 +105,7 @@ public class DeptController extends BaseController {
      * @return success/false
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Boolean edit(@RequestBody SysDept sysDept) {
         sysDept.setUpdateTime(new Date());
         return sysDeptService.updateDeptById(sysDept);

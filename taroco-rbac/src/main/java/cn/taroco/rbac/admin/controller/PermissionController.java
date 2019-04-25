@@ -1,10 +1,12 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.exception.InvalidParamException;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.entity.SysPermission;
 import cn.taroco.rbac.admin.service.SysPermissionService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -44,6 +46,7 @@ public class PermissionController extends BaseController {
      * @return 分页对象
      */
     @GetMapping("/page")
+    @RequireRole(RoleConst.ADMIN)
     public Response page(@RequestParam Map<String, Object> params) {
         final QueryWrapper<SysPermission> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
@@ -61,6 +64,7 @@ public class PermissionController extends BaseController {
      * @return
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response get(@PathVariable Integer id) {
         return Response.success(permissionService.getById(id));
     }
@@ -72,6 +76,7 @@ public class PermissionController extends BaseController {
      * @return success/false
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response delete(@PathVariable Integer id) {
         return Response.success(permissionService.deleteById(id));
     }
@@ -83,6 +88,7 @@ public class PermissionController extends BaseController {
      * @param result     错误信息
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response add(@Valid @RequestBody SysPermission permission, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result.getAllErrors().get(0).getDefaultMessage());
@@ -97,6 +103,7 @@ public class PermissionController extends BaseController {
      * @param result     错误信息
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response update(@Valid @RequestBody SysPermission permission, BindingResult result) {
         if (result.hasErrors()) {
             throw new InvalidParamException(result.getAllErrors().get(0).getDefaultMessage());

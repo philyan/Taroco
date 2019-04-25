@@ -2,9 +2,11 @@ package cn.taroco.rbac.admin.controller;
 
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.entity.SysDict;
 import cn.taroco.rbac.admin.service.SysDictService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -45,6 +47,7 @@ public class DictController extends BaseController {
      * @return 字典信息
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public SysDict dict(@PathVariable Integer id) {
         return sysDictService.getById(id);
     }
@@ -56,6 +59,7 @@ public class DictController extends BaseController {
      * @return 分页对象
      */
     @GetMapping("/dictPage")
+    @RequireRole(RoleConst.ADMIN)
     public Page dictPage(@RequestParam Map<String, Object> params) {
         final QueryWrapper<SysDict> query = new QueryWrapper<>();
         query.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
@@ -73,6 +77,7 @@ public class DictController extends BaseController {
      * @return 同类型字典
      */
     @GetMapping("/type/{type}")
+    @RequireRole(RoleConst.ADMIN)
     public List<SysDict> findDictByType(@PathVariable String type) {
         SysDict condition = new SysDict();
         condition.setDelFlag(CommonConstant.STATUS_NORMAL);
@@ -87,6 +92,7 @@ public class DictController extends BaseController {
      * @return success、false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response dict(@RequestBody SysDict sysDict) {
         return Response.success(sysDictService.save(sysDict));
     }
@@ -99,6 +105,7 @@ public class DictController extends BaseController {
      * @return R
      */
     @DeleteMapping("/{id}/{type}")
+    @RequireRole(RoleConst.ADMIN)
     public Response deleteDict(@PathVariable Integer id, @PathVariable String type) {
         return Response.success(sysDictService.removeById(id));
     }
@@ -110,6 +117,7 @@ public class DictController extends BaseController {
      * @return success/false
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response editDict(@RequestBody SysDict sysDict) {
         return Response.success(sysDictService.updateById(sysDict));
     }

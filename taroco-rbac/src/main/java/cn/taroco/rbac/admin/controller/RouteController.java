@@ -1,10 +1,12 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.entity.SysRoute;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.service.SysRouteService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -42,6 +44,7 @@ public class RouteController extends BaseController {
      * @return SysRoute
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public SysRoute get(@PathVariable Integer id) {
         return sysRouteService.getById(id);
     }
@@ -53,6 +56,7 @@ public class RouteController extends BaseController {
      * @return 分页对象
      */
     @GetMapping("/page")
+    @RequireRole(RoleConst.ADMIN)
     public Page page(@RequestParam Map<String, Object> params) {
         final QueryWrapper<SysRoute> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
@@ -66,6 +70,7 @@ public class RouteController extends BaseController {
      * @return success/false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response add(@RequestBody SysRoute sysRoute) {
         return Response.success(sysRouteService.save(sysRoute));
     }
@@ -77,6 +82,7 @@ public class RouteController extends BaseController {
      * @return success/false
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response delete(@PathVariable Integer id) {
         SysRoute sysRoute = new SysRoute();
         sysRoute.setId(id);
@@ -92,6 +98,7 @@ public class RouteController extends BaseController {
      * @return success/false
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response edit(@RequestBody SysRoute sysRoute) {
         sysRoute.setUpdateTime(new Date());
         return Response.success(sysRouteService.updateById(sysRoute));
@@ -103,6 +110,7 @@ public class RouteController extends BaseController {
      * @return success/fasle
      */
     @GetMapping("/apply")
+    @RequireRole(RoleConst.ADMIN)
     public Response apply() {
         return Response.success(sysRouteService.applyZuulRoute());
     }

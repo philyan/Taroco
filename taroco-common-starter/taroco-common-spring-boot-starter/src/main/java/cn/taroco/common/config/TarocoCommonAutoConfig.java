@@ -2,6 +2,7 @@ package cn.taroco.common.config;
 
 import cn.taroco.common.exception.DefaultExceptionAdvice;
 import cn.taroco.common.web.interceptor.PermissionInterceptor;
+import cn.taroco.common.web.interceptor.RoleInterceptor;
 import cn.taroco.common.web.resolver.TokenArgumentResolver;
 import cn.taroco.common.web.filter.RequestPerformanceFilter;
 import org.hibernate.validator.HibernateValidator;
@@ -39,6 +40,7 @@ public class TarocoCommonAutoConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(new RoleInterceptor());
         registry.addInterceptor(new PermissionInterceptor());
     }
 

@@ -1,9 +1,11 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.utils.Query;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.condition.SysRoleMenuSet;
 import cn.taroco.rbac.admin.model.condition.SysRolePermissionSet;
 import cn.taroco.rbac.admin.model.dto.RoleDTO;
@@ -51,6 +53,7 @@ public class RoleController extends BaseController {
      * @return 角色信息
      */
     @GetMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public SysRole role(@PathVariable Integer id) {
         return sysRoleService.getById(id);
     }
@@ -62,6 +65,7 @@ public class RoleController extends BaseController {
      * @return success、false
      */
     @PostMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response role(@RequestBody RoleDTO roleDto) {
         return Response.success(sysRoleService.insertRole(roleDto));
     }
@@ -73,11 +77,13 @@ public class RoleController extends BaseController {
      * @return success/false
      */
     @PutMapping
+    @RequireRole(RoleConst.ADMIN)
     public Response roleUpdate(@RequestBody RoleDTO roleDto) {
         return Response.success(sysRoleService.updateRoleById(roleDto));
     }
 
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response roleDel(@PathVariable Integer id) {
         SysRole sysRole = sysRoleService.getById(id);
         sysRole.setDelFlag(CommonConstant.STATUS_DEL);
@@ -91,6 +97,7 @@ public class RoleController extends BaseController {
      * @return 角色列表
      */
     @GetMapping("/roleList/{deptId}")
+    @RequireRole(RoleConst.ADMIN)
     public List<SysRole> roleList(@PathVariable Integer deptId) {
         return sysRoleService.selectListByDeptId(deptId);
 
@@ -103,6 +110,7 @@ public class RoleController extends BaseController {
      * @return 分页对象
      */
     @GetMapping("/rolePage")
+    @RequireRole(RoleConst.ADMIN)
     public IPage<RoleDTO> rolePage(@RequestParam Map<String, Object> params) {
         return sysRoleService.selectPageVo(new Query<>(params), (String) params.get("roleName"));
     }
@@ -113,6 +121,7 @@ public class RoleController extends BaseController {
      * @return success、false
      */
     @PutMapping("/roleMenuUpd")
+    @RequireRole(RoleConst.ADMIN)
     public Response roleMenuUpd(@Valid @RequestBody SysRoleMenuSet menuSet) {
         return Response.success(sysRoleMenuService.insertRoleMenus(menuSet.getRoleId(), menuSet.getMenuIds()));
     }
@@ -123,6 +132,7 @@ public class RoleController extends BaseController {
      * @return success、false
      */
     @PutMapping("/permissions")
+    @RequireRole(RoleConst.ADMIN)
     public Response rolePermissions(@Valid @RequestBody SysRolePermissionSet permissionSet) {
         return Response.success(sysRolePermissionService.insertRolePermissions(
                 permissionSet.getRoleId(), permissionSet.getPermissionIds()));

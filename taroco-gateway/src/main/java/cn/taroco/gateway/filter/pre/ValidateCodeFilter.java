@@ -3,8 +3,9 @@ package cn.taroco.gateway.filter.pre;
 import cn.taroco.common.constants.CacheConstants;
 import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.exception.ValidateCodeException;
+import cn.taroco.common.redis.template.TarocoRedisRepository;
+import cn.taroco.common.utils.JsonUtils;
 import cn.taroco.common.web.Response;
-import com.alibaba.fastjson.JSONObject;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.xiaoleilu.hutool.util.StrUtil;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +39,7 @@ public class ValidateCodeFilter extends ZuulFilter {
     private static final String EXPIRED_CAPTCHA_ERROR = "验证码已过期，请重新获取";
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private TarocoRedisRepository redisRepository;
 
     @Override
     public String filterType() {
@@ -84,7 +84,7 @@ public class ValidateCodeFilter extends ZuulFilter {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setStatus(478);
             try {
-                response.getWriter().print(JSONObject.toJSONString(result));
+                response.getWriter().print(JsonUtils.toJsonString(result));
             } catch (IOException e1) {
                 log.error("response io异常");
                 e1.printStackTrace();
@@ -113,11 +113,11 @@ public class ValidateCodeFilter extends ZuulFilter {
         }
 
         final String key = CacheConstants.DEFAULT_CODE_KEY + randomStr;
-        if (!redisTemplate.hasKey(key)) {
+        if (!redisRepository.exists(key)) {
             throw new ValidateCodeException(EXPIRED_CAPTCHA_ERROR);
         }
 
-        final Object codeObj = redisTemplate.opsForValue().get(key);
+        final Object codeObj = redisRepository.get(key);
 
         if (codeObj == null) {
             throw new ValidateCodeException(EXPIRED_CAPTCHA_ERROR);
@@ -125,15 +125,15 @@ public class ValidateCodeFilter extends ZuulFilter {
 
         final String saveCode = codeObj.toString();
         if (StrUtil.isBlank(saveCode)) {
-            redisTemplate.delete(key);
+            redisRepository.del(key);
             throw new ValidateCodeException(EXPIRED_CAPTCHA_ERROR);
         }
 
         if (!StrUtil.equals(saveCode, code)) {
-            redisTemplate.delete(key);
+            redisRepository.del(key);
             throw new ValidateCodeException("验证码错误，请重新输入");
         }
 
-        redisTemplate.delete(key);
+        redisRepository.del(key);
     }
 }
