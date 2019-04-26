@@ -3,7 +3,7 @@ package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
@@ -67,7 +67,7 @@ public class DictController extends BaseController {
         if (params.containsKey(typeKey) && !ObjectUtils.isEmpty(params.get(typeKey))) {
             query.like(typeKey, params.get(typeKey));
         }
-        return (Page) sysDictService.page(new Query<>(params), query);
+        return (Page) sysDictService.page(new PageQuery<>(params), query);
     }
 
     /**

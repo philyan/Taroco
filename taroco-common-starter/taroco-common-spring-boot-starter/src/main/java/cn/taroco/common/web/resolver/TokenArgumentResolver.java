@@ -3,8 +3,8 @@ package cn.taroco.common.web.resolver;
 import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.vo.LoginUser;
 import cn.taroco.common.vo.SysRole;
-import com.xiaoleilu.hutool.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -53,21 +53,18 @@ public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         String username = request.getHeader(SecurityConstants.USER_HEADER);
         String roles = request.getHeader(SecurityConstants.USER_ROLE_HEADER);
-        if (StrUtil.isBlank(username) || StrUtil.isBlank(roles)) {
-            log.warn("resolveArgument error username or role is empty");
-            return null;
-        } else {
-            log.info("resolveArgument username :{} roles:{}", username, roles);
-        }
+        log.info("resolveArgument username :{} roles:{}", username, roles);
         LoginUser loginUser = new LoginUser();
         loginUser.setUsername(username);
         List<SysRole> sysRoleList = new ArrayList<>();
-        Arrays.stream(roles.split(",")).forEach(role -> {
-            SysRole sysRole = new SysRole();
-            sysRole.setRoleName(role);
-            sysRoleList.add(sysRole);
-        });
-        loginUser.setRoleList(sysRoleList);
+        if (StringUtils.isNotEmpty(roles)) {
+            Arrays.stream(roles.split(",")).forEach(role -> {
+                SysRole sysRole = new SysRole();
+                sysRole.setRoleName(role);
+                sysRoleList.add(sysRole);
+            });
+            loginUser.setRoleList(sysRoleList);
+        }
         return loginUser;
     }
 

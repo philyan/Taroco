@@ -1,6 +1,6 @@
 package cn.taroco.rbac.admin.service;
 
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.rbac.admin.model.dto.RoleDTO;
 import cn.taroco.rbac.admin.model.entity.SysRole;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -31,20 +31,20 @@ public interface SysRoleService extends IService<SysRole> {
     /**
      * 分页查询用户信息（含有角色信息）
      *
-     * @param query 查询条件
+     * @param pageQuery 查询条件
      * @param roleName 角色名称
      * @return
      */
-    IPage<RoleDTO> selectPageVo(Query query, String roleName);
+    IPage<RoleDTO> selectPageVo(PageQuery pageQuery, String roleName);
 
     /**
      * 分页查角色列表
      *
-     * @param objectQuery         查询条件
+     * @param objectPageQuery         查询条件
      * @param objectEntityWrapper wapper
      * @return page
      */
-    Page selectwithDeptPage(Query objectQuery, QueryWrapper objectEntityWrapper);
+    Page selectwithDeptPage(PageQuery objectPageQuery, QueryWrapper objectEntityWrapper);
 
     /**
      * 更新角色

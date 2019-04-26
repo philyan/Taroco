@@ -2,10 +2,11 @@ package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
+import cn.taroco.rbac.admin.model.condition.SysRoleMemberSet;
 import cn.taroco.rbac.admin.model.condition.SysRoleMenuSet;
 import cn.taroco.rbac.admin.model.condition.SysRolePermissionSet;
 import cn.taroco.rbac.admin.model.dto.RoleDTO;
@@ -13,6 +14,7 @@ import cn.taroco.rbac.admin.model.entity.SysRole;
 import cn.taroco.rbac.admin.service.SysRoleMenuService;
 import cn.taroco.rbac.admin.service.SysRolePermissionService;
 import cn.taroco.rbac.admin.service.SysRoleService;
+import cn.taroco.rbac.admin.service.SysUserRoleService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,6 +44,9 @@ public class RoleController extends BaseController {
 
     @Autowired
     private SysRoleMenuService sysRoleMenuService;
+
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
     @Autowired
     private SysRolePermissionService sysRolePermissionService;
@@ -82,6 +87,12 @@ public class RoleController extends BaseController {
         return Response.success(sysRoleService.updateRoleById(roleDto));
     }
 
+    /**
+     * 删除角色
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     @RequireRole(RoleConst.ADMIN)
     public Response roleDel(@PathVariable Integer id) {
@@ -112,7 +123,52 @@ public class RoleController extends BaseController {
     @GetMapping("/rolePage")
     @RequireRole(RoleConst.ADMIN)
     public IPage<RoleDTO> rolePage(@RequestParam Map<String, Object> params) {
-        return sysRoleService.selectPageVo(new Query<>(params), (String) params.get("roleName"));
+        return sysRoleService.selectPageVo(new PageQuery<>(params), (String) params.get("roleName"));
+    }
+
+    /**
+     * 更新角色成员
+     *
+     * @return success、false
+     */
+    @PutMapping("/members/{operate}")
+    @RequireRole(RoleConst.ADMIN)
+    public Response roleMembersUpdate(@Valid @RequestBody SysRoleMemberSet memberSet, @PathVariable String operate) {
+
+        final String add = "add";
+        final String delete = "delete";
+        Boolean fg = false;
+        if (add.equals(operate)) {
+            fg = sysUserRoleService.insertRoleMembers(memberSet.getRoleId(), memberSet.getUserIds());
+        } else if (delete.equals(operate)) {
+            fg = sysUserRoleService.deleteRoleMembers(memberSet.getRoleId(), memberSet.getUserIds());
+        }
+
+        return Response.success(fg);
+    }
+
+    /**
+     * 查询已添加成员
+     *
+     * @param roleId
+     * @return
+     */
+    @GetMapping("/members/added/{roleId}")
+    @RequireRole(RoleConst.ADMIN)
+    public Response roleMembersAdded(@PathVariable Integer roleId, @RequestParam Map<String, Object> params) {
+        return Response.success(sysUserRoleService.roleMembersAdded(new PageQuery<>(params), roleId, params));
+    }
+
+    /**
+     * 查询未添加成员
+     *
+     * @param roleId
+     * @return
+     */
+    @GetMapping("/members/notin/{roleId}")
+    @RequireRole(RoleConst.ADMIN)
+    public Response roleMembersNotin(@PathVariable Integer roleId, @RequestParam Map<String, Object> params) {
+        return Response.success(sysUserRoleService.roleMembersNotin(new PageQuery<>(params), roleId, params));
     }
 
     /**
@@ -131,10 +187,42 @@ public class RoleController extends BaseController {
      *
      * @return success、false
      */
-    @PutMapping("/permissions")
+    @PutMapping("/permissions/{operate}")
     @RequireRole(RoleConst.ADMIN)
-    public Response rolePermissions(@Valid @RequestBody SysRolePermissionSet permissionSet) {
-        return Response.success(sysRolePermissionService.insertRolePermissions(
-                permissionSet.getRoleId(), permissionSet.getPermissionIds()));
+    public Response rolePermissions(@Valid @RequestBody SysRolePermissionSet permissionSet, @PathVariable String operate) {
+
+        final String add = "add";
+        final String delete = "delete";
+        Boolean fg = false;
+        if (add.equals(operate)) {
+            fg = sysRolePermissionService.insertRolePermissions(permissionSet.getRoleId(), permissionSet.getPermissionIds());
+        } else if (delete.equals(operate)) {
+            fg = sysRolePermissionService.deleteRolePermissions(permissionSet.getRoleId(), permissionSet.getPermissionIds());
+        }
+        return Response.success(fg);
+    }
+
+    /**
+     * 查询已添加权限
+     *
+     * @param roleId
+     * @return
+     */
+    @GetMapping("/permissions/added/{roleId}")
+    @RequireRole(RoleConst.ADMIN)
+    public Response rolePermissionsAdded(@PathVariable Integer roleId, @RequestParam Map<String, Object> params) {
+        return Response.success(sysRolePermissionService.rolePermissionsAdded(new PageQuery<>(params), roleId, params));
+    }
+
+    /**
+     * 查询未添加权限
+     *
+     * @param roleId
+     * @return
+     */
+    @GetMapping("/permissions/notin/{roleId}")
+    @RequireRole(RoleConst.ADMIN)
+    public Response rolePermissionsNotin(@PathVariable Integer roleId, @RequestParam Map<String, Object> params) {
+        return Response.success(sysRolePermissionService.rolePermissionsNotin(new PageQuery<>(params), roleId, params));
     }
 }

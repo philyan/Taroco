@@ -13,7 +13,7 @@ import java.util.Map;
  * @date 2017/12/10
  */
 @SuppressWarnings("unchecked")
-public class Query<T> extends Page<T> {
+public class PageQuery<T> extends Page<T> {
     private static final long serialVersionUID = 6666126323467141114L;
 
     private static final String PAGE = "page";
@@ -24,7 +24,7 @@ public class Query<T> extends Page<T> {
 
     private static final String DESC = "desc";
 
-    public Query(Map<String, Object> params) {
+    public PageQuery(Map<String, Object> params) {
         super(Integer.parseInt(params.getOrDefault(PAGE, 1).toString())
                 , Integer.parseInt(params.getOrDefault(LIMIT, 10).toString()));
 

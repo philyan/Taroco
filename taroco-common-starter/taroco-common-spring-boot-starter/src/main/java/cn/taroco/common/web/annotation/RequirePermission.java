@@ -25,4 +25,11 @@ public @interface RequirePermission {
      * @return
      */
     String value() default PermissionConst.ANY;
+
+    /**
+     * 超级管理员是否可以访问 默认: true
+     *
+     * @return
+     */
+    boolean isAdminAccess() default true;
 }

@@ -1,7 +1,7 @@
 package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.RoleConst;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
@@ -62,7 +62,7 @@ public class OauthClientDetailsController extends BaseController {
     @GetMapping("/page")
     @RequireRole(RoleConst.ADMIN)
     public Page page(@RequestParam Map<String, Object> params) {
-        return (Page) sysOauthClientDetailsService.page(new Query<>(params));
+        return (Page) sysOauthClientDetailsService.page(new PageQuery<>(params));
     }
 
     /**

@@ -16,11 +16,9 @@ public class UserDTO extends SysUser {
 
     private static final long serialVersionUID = 7036595309620126662L;
 
-    @NotNull(message = "用户部门不能为空")
-    private Integer deptId;
-
     /**
      * 新密码
      */
+    @NotNull(message = "用户密码不能为空")
     private String newpassword1;
 }

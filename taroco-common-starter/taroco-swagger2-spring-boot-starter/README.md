@@ -56,7 +56,7 @@ swagger.globalOperationParameters[1].required=false
 - swagger.globalOperationParameters[0].name=参数名
 - swagger.globalOperationParameters[0].description=描述信息
 - swagger.globalOperationParameters[0].modelRef=指定参数类型
-- swagger.globalOperationParameters[0].parameterType=指定参数存放位置,可选header,query,path,body.form
+- swagger.globalOperationParameters[0].parameterType=指定参数存放位置,可选header,pageQuery,path,body.form
 - swagger.globalOperationParameters[0].required=指定参数是否必传，true,false
 ```
 
@@ -102,11 +102,11 @@ swagger.exclude-path=/ops/**, /error
 - swagger.docket.<name>.exclude-path=需要排除的URL规则，默认：空
 - swagger.docket.<name>.name=参数名
 - swagger.docket.<name>.modelRef=指定参数类型
-- swagger.docket.<name>.parameterType=指定参数存放位置,可选header,query,path,body.form
+- swagger.docket.<name>.parameterType=指定参数存放位置,可选header,pageQuery,path,body.form
 - swagger.docket.<name>.required=true=指定参数是否必传，true,false
 - swagger.docket.<name>.globalOperationParameters[0].name=参数名
 - swagger.docket.<name>.globalOperationParameters[0].description=描述信息
-- swagger.docket.<name>.globalOperationParameters[0].modelRef=指定参数存放位置,可选header,query,path,body.form
+- swagger.docket.<name>.globalOperationParameters[0].modelRef=指定参数存放位置,可选header,pageQuery,path,body.form
 - swagger.docket.<name>.globalOperationParameters[0].parameterType=指定参数是否必传，true,false
 ```
 

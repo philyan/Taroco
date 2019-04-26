@@ -6,13 +6,13 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
- * 角色权限设置条件
+ * 角色成员设置
  *
  * @author liuht
  * 2019/2/19 17:20
  */
 @Data
-public class SysRolePermissionSet {
+public class SysRoleMemberSet {
 
     /**
      * 角色ID
@@ -21,7 +21,7 @@ public class SysRolePermissionSet {
     private Integer roleId;
 
     /**
-     * 权限ID
+     * 成员id
      */
-    private Set<Integer> permissionIds;
+    private Set<Integer> userIds;
 }

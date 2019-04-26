@@ -2,7 +2,7 @@ package cn.taroco.rbac.admin.controller;
 
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.vo.LoginUser;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.BaseController;
@@ -13,10 +13,7 @@ import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
 import cn.taroco.rbac.admin.service.SysUserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +34,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController extends BaseController {
-
-    private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     @Autowired
     private SysUserService userService;
@@ -96,12 +91,8 @@ public class UserController extends BaseController {
     @PostMapping
     @RequireRole(RoleConst.ADMIN)
     public Response user(@Valid @RequestBody UserDTO userDto) {
-        SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(userDto, sysUser);
-        sysUser.setDelFlag(CommonConstant.STATUS_NORMAL);
-        sysUser.setPassword(ENCODER.encode(userDto.getNewpassword1()));
-        userService.save(sysUser);
-        return Response.success(Boolean.TRUE);
+
+        return Response.success(userService.addUser(userDto));
     }
 
     /**
@@ -159,7 +150,7 @@ public class UserController extends BaseController {
     @GetMapping("/userPage")
     @RequireRole(RoleConst.ADMIN)
     public IPage<UserVO> userPage(@RequestParam Map<String, Object> params) {
-        return userService.selectPage(new Query(params), (String) params.get("username"));
+        return userService.selectPage(new PageQuery(params), (String) params.get("username"));
     }
 
     /**

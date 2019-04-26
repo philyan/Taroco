@@ -3,6 +3,7 @@ package cn.taroco.common.vo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,5 +25,5 @@ public class LoginUser implements Serializable {
     /**
      * 角色列表
      */
-    private List<SysRole> roleList;
+    private List<SysRole> roleList = Collections.emptyList();
 }

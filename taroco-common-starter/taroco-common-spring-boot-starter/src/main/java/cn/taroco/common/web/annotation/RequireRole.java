@@ -23,4 +23,11 @@ public @interface RequireRole {
      * @return
      */
     String value() default "";
+
+    /**
+     * 超级管理员是否可以访问 默认: true
+     *
+     * @return
+     */
+    boolean isAdminAccess() default true;
 }

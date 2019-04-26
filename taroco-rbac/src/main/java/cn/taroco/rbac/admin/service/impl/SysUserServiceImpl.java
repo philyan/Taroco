@@ -1,9 +1,11 @@
 package cn.taroco.rbac.admin.service.impl;
 
 import cn.taroco.common.constants.CacheConstants;
+import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.SecurityConstants;
+import cn.taroco.common.exception.InvalidParamException;
 import cn.taroco.common.redis.template.TarocoRedisRepository;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.vo.SysRole;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.Response;
@@ -120,8 +122,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public IPage<UserVO> selectPage(Query query, String username) {
-        return sysUserMapper.selectPageVo(query, username);
+    public IPage<UserVO> selectPage(PageQuery pageQuery, String username) {
+        return sysUserMapper.selectPageVo(pageQuery, username);
     }
 
     /**
@@ -144,6 +146,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public void saveImageCode(String randomStr, String imageCode) {
         redisRepository.setExpire(CacheConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE);
+    }
+
+    @Override
+    public Boolean addUser(final UserDTO userDto) {
+        final String username = userDto.getUsername();
+        final String phone = userDto.getPhone();
+        if (findUserByUsername(username) != null) {
+            throw new InvalidParamException("用户名:" + username + ", 已经存在");
+        }
+        if (findUserByMobile(phone) != null) {
+            throw new InvalidParamException("手机号:" + phone + ", 已经存在");
+        }
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(userDto, sysUser);
+        sysUser.setDelFlag(CommonConstant.STATUS_NORMAL);
+        sysUser.setPassword(ENCODER.encode(userDto.getNewpassword1()));
+        return this.save(sysUser);
     }
 
     /**

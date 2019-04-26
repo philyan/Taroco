@@ -38,6 +38,12 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         if (requirePermission == null) {
             return true;
         }
+
+        final String username = request.getHeader(SecurityConstants.USER_HEADER);
+        if (!StringUtils.isEmpty(username) && CommonConstant.ADMIN_USER_NAME.equals(username) && requirePermission.isAdminAccess()) {
+            return true;
+        }
+
         final String pers = request.getHeader(SecurityConstants.USER_PERMISSION_HEADER);
         if (StringUtils.isEmpty(pers)) {
             doNoPermission(request, response, "NONE");

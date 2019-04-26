@@ -1,6 +1,6 @@
 package cn.taroco.rbac.admin.service.impl;
 
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.rbac.admin.mapper.SysRoleDeptMapper;
 import cn.taroco.rbac.admin.mapper.SysRoleMapper;
 import cn.taroco.rbac.admin.model.dto.RoleDTO;
@@ -54,20 +54,20 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     }
 
     @Override
-    public IPage<RoleDTO> selectPageVo(final Query query, final String roleName) {
-        return sysRoleMapper.selectPageVo(query, roleName);
+    public IPage<RoleDTO> selectPageVo(final PageQuery pageQuery, final String roleName) {
+        return sysRoleMapper.selectPageVo(pageQuery, roleName);
     }
 
     /**
      * 分页查角色列表
      *
-     * @param query   查询条件
+     * @param pageQuery   查询条件
      * @param wrapper wapper
      * @return page
      */
     @Override
-    public Page selectwithDeptPage(Query query, QueryWrapper wrapper) {
-        return (Page) sysRoleMapper.selectPage(query, wrapper);
+    public Page selectwithDeptPage(PageQuery pageQuery, QueryWrapper wrapper) {
+        return (Page) sysRoleMapper.selectPage(pageQuery, wrapper);
     }
 
     /**

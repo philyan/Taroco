@@ -18,14 +18,14 @@ import java.util.List;
 public class TarocoOauth2Properties {
 
     /**
-     * accessTokenValiditySeconds, default: 30 days.
+     * accessTokenValiditySeconds, default: 1 day.
      */
-    private int accessTokenValiditySeconds = 60 * 60 * 24 * 30;
+    private int accessTokenValiditySeconds = 60 * 60 * 24;
 
     /**
-     * refreshTokenValiditySeconds, default: 12 hours.
+     * refreshTokenValiditySeconds, default: 1 day.
      */
-    private int refreshTokenValiditySeconds = 60 * 60 * 12;
+    private int refreshTokenValiditySeconds = 60 * 60 * 24;
 
     /**
      * the urls for permitAll.

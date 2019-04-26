@@ -5,7 +5,7 @@ import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.entity.SysLog;
 import cn.taroco.common.exception.InvalidParamException;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
@@ -56,7 +56,7 @@ public class LogController extends BaseController {
         if (params.containsKey(typeKey) && !ObjectUtils.isEmpty(params.get(typeKey))) {
             query.eq(typeKey, params.get(typeKey));
         }
-        return (Page) sysLogService.page(new Query<>(params), query);
+        return (Page) sysLogService.page(new PageQuery<>(params), query);
     }
 
     /**

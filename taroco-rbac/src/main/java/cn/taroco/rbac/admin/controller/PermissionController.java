@@ -3,7 +3,7 @@ package cn.taroco.rbac.admin.controller;
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.exception.InvalidParamException;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
@@ -54,7 +54,7 @@ public class PermissionController extends BaseController {
         if (params.containsKey(codeKey) && !ObjectUtils.isEmpty(params.get(codeKey))) {
             queryWrapper.like(codeKey, params.get(codeKey));
         }
-        return Response.success(permissionService.page(new Query<>(params), queryWrapper));
+        return Response.success(permissionService.page(new PageQuery<>(params), queryWrapper));
     }
 
     /**

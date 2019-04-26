@@ -60,7 +60,6 @@ public class MenuController extends BaseController {
      * @return 当前用户的树形菜单
      */
     @GetMapping(value = "/userMenu")
-    @RequireRole(RoleConst.ADMIN)
     public List<MenuTree> userMenu(@RequestHeader(name = SecurityConstants.USER_ROLE_HEADER) String roles) {
         if (StringUtils.isEmpty(roles)) {
             return Collections.emptyList();
@@ -142,6 +141,12 @@ public class MenuController extends BaseController {
         return Response.success(sysMenuService.deleteMenu(id));
     }
 
+    /**
+     * 更新菜单
+     *
+     * @param sysMenu
+     * @return
+     */
     @PutMapping
     @RequireRole(RoleConst.ADMIN)
     public Response menuUpdate(@RequestBody SysMenu sysMenu) {

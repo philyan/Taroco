@@ -3,7 +3,7 @@ package cn.taroco.rbac.admin.model.condition;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * 角色菜单设置条件
@@ -23,5 +23,5 @@ public class SysRoleMenuSet {
     /**
      * 菜单ID
      */
-    private Collection<Integer> menuIds;
+    private Set<Integer> menuIds;
 }

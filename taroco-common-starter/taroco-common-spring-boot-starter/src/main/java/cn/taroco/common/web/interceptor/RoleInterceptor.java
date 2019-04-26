@@ -38,6 +38,12 @@ public class RoleInterceptor extends HandlerInterceptorAdapter {
         if (requireRole == null) {
             return true;
         }
+
+        final String username = request.getHeader(SecurityConstants.USER_HEADER);
+        if (!StringUtils.isEmpty(username) && CommonConstant.ADMIN_USER_NAME.equals(username) && requireRole.isAdminAccess()) {
+            return true;
+        }
+
         final String roles = request.getHeader(SecurityConstants.USER_ROLE_HEADER);
         if (StringUtils.isEmpty(roles)) {
             doNoPermission(request, response, "NONE");

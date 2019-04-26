@@ -1,6 +1,6 @@
 package cn.taroco.rbac.admin.service;
 
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.Response;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @date 2017/10/31
  */
 public interface SysUserService extends IService<SysUser> {
+
     /**
      * 根据用户名查询用户角色信息
      *
@@ -25,11 +26,11 @@ public interface SysUserService extends IService<SysUser> {
     /**
      * 分页查询用户信息（含有角色信息）
      *
-     * @param query    查询条件
-     * @param username 用户名称
+     * @param pageQuery 查询条件
+     * @param username  用户名称
      * @return
      */
-    IPage<UserVO> selectPage(Query query, String username);
+    IPage<UserVO> selectPage(PageQuery pageQuery, String username);
 
     /**
      * 查询用户信息
@@ -46,6 +47,14 @@ public interface SysUserService extends IService<SysUser> {
      * @param imageCode 验证码
      */
     void saveImageCode(String randomStr, String imageCode);
+
+    /**
+     * 添加用户
+     *
+     * @param userDto
+     * @return
+     */
+    Boolean addUser(UserDTO userDto);
 
     /**
      * 删除用户

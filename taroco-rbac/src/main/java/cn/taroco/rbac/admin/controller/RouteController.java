@@ -3,7 +3,7 @@ package cn.taroco.rbac.admin.controller;
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.entity.SysRoute;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
@@ -60,7 +60,7 @@ public class RouteController extends BaseController {
     public Page page(@RequestParam Map<String, Object> params) {
         final QueryWrapper<SysRoute> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
-        return (Page) sysRouteService.page(new Query<>(params), queryWrapper);
+        return (Page) sysRouteService.page(new PageQuery<>(params), queryWrapper);
     }
 
     /**
