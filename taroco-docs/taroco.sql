@@ -142,6 +142,7 @@ INSERT INTO `sys_menu` VALUES ('14', '接口文档', 'taroco-api', '', '8', 'buy
 INSERT INTO `sys_menu` VALUES ('100', '客户端管理', 'client', '', '1', 'share-alt', '9', '2018-01-20 13:17:19', '2018-09-08 02:02:02', '0');
 INSERT INTO `sys_menu` VALUES ('110', '路由管理', 'route', null, '1', 'object-ungroup', '8', '2018-05-15 21:44:51', '2018-09-08 02:02:07', '0');
 INSERT INTO `sys_menu` VALUES ('111', '权限管理', 'auth', null, '1', 'universal-access', '5', '2019-04-12 16:45:54', '2019-04-12 16:47:58', '0');
+INSERT INTO `sys_menu` VALUES ('112', '服务治理', 'taroco-governance', null, '8', 'line-chart', '1', '2019-04-12 16:45:54', '2019-04-12 16:47:58', '0');
 
 -- ----------------------------
 -- Table structure for sys_oauth_client_details
@@ -250,6 +251,7 @@ INSERT INTO `sys_role_menu` VALUES ('1', '14');
 INSERT INTO `sys_role_menu` VALUES ('1', '100');
 INSERT INTO `sys_role_menu` VALUES ('1', '110');
 INSERT INTO `sys_role_menu` VALUES ('1', '111');
+INSERT INTO `sys_role_menu` VALUES ('1', '112');
 
 -- ----------------------------
 -- Table structure for sys_role_permission
