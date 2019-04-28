@@ -14,7 +14,6 @@ import cn.taroco.rbac.admin.model.dto.UserDTO;
 import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
 import cn.taroco.rbac.admin.service.SysRolePermissionService;
-import cn.taroco.rbac.admin.service.SysUserRoleService;
 import cn.taroco.rbac.admin.service.SysUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,9 +49,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     private SysUserMapper sysUserMapper;
-
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
 
     @Autowired
     private SysRolePermissionService sysRolePermissionService;
@@ -199,17 +195,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return Response.success(true);
     }
 
-    /**
-     * 删除用户
-     *
-     * @param sysUser 用户
-     * @return Boolean
-     */
     @Override
-    public Boolean deleteUserById(SysUser sysUser) {
-        sysUserRoleService.deleteByUserId(sysUser.getUserId());
-        this.removeById(sysUser.getUserId());
-        return Boolean.TRUE;
+    public Boolean deleteUserById(Integer id) {
+        SysUser sysUser = this.getById(id);
+        if (sysUser == null) {
+            throw new InvalidParamException("无效的用户ID");
+        }
+        if (CommonConstant.ADMIN_USER_NAME.equals(sysUser.getUsername())) {
+            throw new InvalidParamException("不允许删除超级管理员");
+        }
+        sysUser.setDelFlag(CommonConstant.STATUS_DEL);
+        return this.updateById(sysUser);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package cn.taroco.rbac.admin.controller;
 
-import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.vo.LoginUser;
@@ -75,11 +74,7 @@ public class UserController extends BaseController {
     @DeleteMapping("/{id}")
     @RequireRole(RoleConst.ADMIN)
     public Response userDel(@PathVariable Integer id) {
-        SysUser sysUser = userService.getById(id);
-        if (CommonConstant.ADMIN_USER_NAME.equals(sysUser.getUsername())) {
-            return Response.failure("不允许删除超级管理员");
-        }
-        return Response.success(userService.deleteUserById(sysUser));
+        return Response.success(userService.deleteUserById(id));
     }
 
     /**
@@ -91,7 +86,6 @@ public class UserController extends BaseController {
     @PostMapping
     @RequireRole(RoleConst.ADMIN)
     public Response user(@Valid @RequestBody UserDTO userDto) {
-
         return Response.success(userService.addUser(userDto));
     }
 

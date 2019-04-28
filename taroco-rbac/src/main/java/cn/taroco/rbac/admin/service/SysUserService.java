@@ -59,10 +59,10 @@ public interface SysUserService extends IService<SysUser> {
     /**
      * 删除用户
      *
-     * @param sysUser 用户
+     * @param id 用户ID
      * @return boolean
      */
-    Boolean deleteUserById(SysUser sysUser);
+    Boolean deleteUserById(Integer id);
 
     /**
      * 更新当前用户基本信息
