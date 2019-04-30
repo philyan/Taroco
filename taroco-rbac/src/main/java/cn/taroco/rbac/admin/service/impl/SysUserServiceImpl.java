@@ -11,7 +11,6 @@ import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.Response;
 import cn.taroco.rbac.admin.mapper.SysUserMapper;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
-import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
 import cn.taroco.rbac.admin.service.SysRolePermissionService;
 import cn.taroco.rbac.admin.service.SysUserService;
@@ -27,11 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -52,34 +48,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     private SysRolePermissionService sysRolePermissionService;
-
-    @Override
-    public UserInfo findUserInfo(UserVO userVo) {
-        SysUser condition = new SysUser();
-        condition.setUsername(userVo.getUsername());
-        SysUser sysUser = this.getOne(new QueryWrapper<>(condition));
-
-        UserInfo userInfo = new UserInfo();
-        userInfo.setSysUser(sysUser);
-        //设置角色列表
-        List<SysRole> roleList = userVo.getRoleList();
-        List<String> roleNames = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(roleList)) {
-            for (SysRole sysRole : roleList) {
-                roleNames.add(sysRole.getRoleName());
-            }
-        }
-        String[] roles = roleNames.toArray(new String[roleNames.size()]);
-        userInfo.setRoles(roles);
-
-        Set<String> permissions = new HashSet<>();
-        roleList.forEach(role -> permissions.addAll(sysRolePermissionService.getRolePermissions(role.getRoleId())));
-        if (!CollectionUtils.isEmpty(permissions)) {
-            userInfo.setPermissions(permissions.toArray(new String[permissions.size()]));
-        }
-
-        return userInfo;
-    }
 
     @Override
     public UserVO findUserByUsername(String username) {

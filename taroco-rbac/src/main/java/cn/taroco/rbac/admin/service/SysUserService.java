@@ -4,7 +4,6 @@ import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.Response;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
-import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -31,14 +30,6 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     IPage<UserVO> selectPage(PageQuery pageQuery, String username);
-
-    /**
-     * 查询用户信息
-     *
-     * @param userVo 角色名
-     * @return userInfo
-     */
-    UserInfo findUserInfo(UserVO userVo);
 
     /**
      * 保存验证码

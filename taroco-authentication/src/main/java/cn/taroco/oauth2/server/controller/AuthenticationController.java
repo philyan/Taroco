@@ -39,6 +39,9 @@ public class AuthenticationController {
      */
     @RequestMapping("/user")
     public Object user(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
         return authentication.getPrincipal();
     }
 

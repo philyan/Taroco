@@ -8,7 +8,6 @@ import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
 import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
-import cn.taroco.rbac.admin.model.dto.UserInfo;
 import cn.taroco.rbac.admin.model.entity.SysUser;
 import cn.taroco.rbac.admin.service.SysUserService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -36,22 +35,6 @@ public class UserController extends BaseController {
 
     @Autowired
     private SysUserService userService;
-
-    /**
-     * 获取当前用户信息（角色、权限）
-     * 并且异步初始化用户部门信息
-     *
-     * @param loginUser 当前用户信息
-     * @return 用户名
-     */
-    @GetMapping("/info")
-    public Response user(LoginUser loginUser) {
-        final UserVO userVO = new UserVO();
-        userVO.setUsername(loginUser.getUsername());
-        userVO.setRoleList(loginUser.getRoleList());
-        UserInfo userInfo = userService.findUserInfo(userVO);
-        return Response.success(userInfo);
-    }
 
     /**
      * 通过ID查询当前用户信息
