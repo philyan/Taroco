@@ -1,13 +1,17 @@
 package cn.taroco.common.ribbon;
 
-import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.SecurityConstants;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
-import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
+import org.springframework.cloud.alibaba.nacos.ribbon.NacosServer;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * 扩展ribbon 负责均衡策略(LoadBalancerRule)
@@ -38,13 +42,13 @@ public class XlabelWeightMetadataRule extends ZoneAvoidanceRule {
         Map<Server, Integer> serverWeightMap = new HashMap<>(serverList.size());
         for (Server server : serverList) {
             // 获取server Meta信息
-            Map<String, String> metadata = ((DiscoveryEnabledServer) server).getInstanceInfo().getMetadata();
+            Map<String, String> metadata = ((NacosServer) server).getMetadata();
 
             // 优先匹配 x-label标签信息,为header中带有x-label标签的请求优先选择对应的server
             // labelOr 或
-            String labelOr = metadata.get(CommonConstant.LABEL_OR);
+            String labelOr = metadata.get(SecurityConstants.LABEL_OR);
             if(!StringUtils.isEmpty(labelOr)){
-                String[] metadataLabel = labelOr.split(CommonConstant.HEADER_LABEL_SPLIT);
+                String[] metadataLabel = labelOr.split(SecurityConstants.HEADER_LABEL_SPLIT);
                 for (String label : metadataLabel) {
                     if(XlabelMvcHeaderInterceptor.LABEL.get().contains(label)){
                         return server;
@@ -52,15 +56,15 @@ public class XlabelWeightMetadataRule extends ZoneAvoidanceRule {
                 }
             }
             // labelAnd 且
-            String labelAnd = metadata.get(CommonConstant.LABEL_AND);
+            String labelAnd = metadata.get(SecurityConstants.LABEL_AND);
             if(!StringUtils.isEmpty(labelAnd)){
-                List<String> metadataLabel = Arrays.asList(labelAnd.split(CommonConstant.HEADER_LABEL_SPLIT));
+                List<String> metadataLabel = Arrays.asList(labelAnd.split(SecurityConstants.HEADER_LABEL_SPLIT));
                 if(XlabelMvcHeaderInterceptor.LABEL.get().containsAll(metadataLabel)){
                     return server;
                 }
             }
             // 根据权重做选择
-            String strWeight = metadata.get(CommonConstant.WEIGHT_KEY);
+            String strWeight = metadata.get(SecurityConstants.WEIGHT_KEY);
             // 默认 100
             int weight = 100;
             try {

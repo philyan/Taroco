@@ -1,15 +1,17 @@
 package cn.taroco.rbac.admin.service.impl;
 
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.rbac.admin.mapper.SysRoleDeptMapper;
 import cn.taroco.rbac.admin.mapper.SysRoleMapper;
 import cn.taroco.rbac.admin.model.dto.RoleDTO;
 import cn.taroco.rbac.admin.model.entity.SysRole;
 import cn.taroco.rbac.admin.model.entity.SysRoleDept;
 import cn.taroco.rbac.admin.service.SysRoleService;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import java.util.List;
  * @author liuht
  * @since 2017-10-29
  */
+@SuppressWarnings("unchecked")
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
     @Autowired
@@ -50,17 +53,21 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return true;
     }
 
+    @Override
+    public IPage<RoleDTO> selectPageVo(final PageQuery pageQuery, final String roleName) {
+        return sysRoleMapper.selectPageVo(pageQuery, roleName);
+    }
+
     /**
      * 分页查角色列表
      *
-     * @param query   查询条件
+     * @param pageQuery   查询条件
      * @param wrapper wapper
      * @return page
      */
     @Override
-    public Page selectwithDeptPage(Query<Object> query, EntityWrapper<Object> wrapper) {
-        query.setRecords(sysRoleMapper.selectRolePage(query, query.getCondition()));
-        return query;
+    public Page selectwithDeptPage(PageQuery pageQuery, QueryWrapper wrapper) {
+        return (Page) sysRoleMapper.selectPage(pageQuery, wrapper);
     }
 
     /**
@@ -75,7 +82,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         //删除原有的角色部门关系
         SysRoleDept condition = new SysRoleDept();
         condition.setRoleId(roleDto.getRoleId());
-        sysRoleDeptMapper.delete(new EntityWrapper<>(condition));
+        sysRoleDeptMapper.delete(new UpdateWrapper<>(condition));
 
         //更新角色信息
         SysRole sysRole = new SysRole();

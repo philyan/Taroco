@@ -1,38 +1,34 @@
 package cn.taroco.rbac.admin.service.impl;
 
-import cn.taroco.common.bean.interceptor.DataScope;
+import cn.taroco.common.constants.CacheConstants;
+import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.constants.SecurityConstants;
-import cn.taroco.common.utils.Query;
-import cn.taroco.common.vo.MenuVO;
+import cn.taroco.common.exception.InvalidParamException;
+import cn.taroco.common.redis.template.TarocoRedisRepository;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.vo.SysRole;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.common.web.Response;
 import cn.taroco.rbac.admin.mapper.SysUserMapper;
 import cn.taroco.rbac.admin.model.dto.UserDTO;
-import cn.taroco.rbac.admin.model.dto.UserInfo;
-import cn.taroco.rbac.admin.model.entity.SysDeptRelation;
 import cn.taroco.rbac.admin.model.entity.SysUser;
-import cn.taroco.rbac.admin.model.entity.SysUserRole;
-import cn.taroco.rbac.admin.service.SysDeptRelationService;
-import cn.taroco.rbac.admin.service.SysMenuService;
-import cn.taroco.rbac.admin.service.SysUserRoleService;
+import cn.taroco.rbac.admin.service.SysRolePermissionService;
 import cn.taroco.rbac.admin.service.SysUserService;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xiaoleilu.hutool.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author liuht
@@ -41,59 +37,30 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+
     private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
+
     @Autowired
-    private SysMenuService sysMenuService;
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private TarocoRedisRepository redisRepository;
+
     @Autowired
     private SysUserMapper sysUserMapper;
+
     @Autowired
-    private SysUserRoleService sysUserRoleService;
-    @Autowired
-    private SysDeptRelationService sysDeptRelationService;
-
-    @Override
-    public UserInfo findUserInfo(UserVO userVo) {
-        SysUser condition = new SysUser();
-        condition.setUsername(userVo.getUsername());
-        SysUser sysUser = this.selectOne(new EntityWrapper<>(condition));
-
-        UserInfo userInfo = new UserInfo();
-        userInfo.setSysUser(sysUser);
-        //设置角色列表
-        List<SysRole> roleList = userVo.getRoleList();
-        List<String> roleNames = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(roleList)) {
-            for (SysRole sysRole : roleList) {
-                if (!org.apache.commons.lang3.StringUtils.equals(SecurityConstants.BASE_ROLE, sysRole.getRoleName())) {
-                    roleNames.add(sysRole.getRoleName());
-                }
-            }
-        }
-        String[] roles = roleNames.toArray(new String[roleNames.size()]);
-        userInfo.setRoles(roles);
-
-        //设置权限列表（menu.permission）
-        Set<MenuVO> menuVoSet = new HashSet<>();
-        for (String role : roles) {
-            List<MenuVO> menuVos = sysMenuService.findMenuByRoleName(role);
-            menuVoSet.addAll(menuVos);
-        }
-        Set<String> permissions = new HashSet<>();
-        for (MenuVO menuVo : menuVoSet) {
-            if (StringUtils.isNotEmpty(menuVo.getPermission())) {
-                String permission = menuVo.getPermission();
-                permissions.add(permission);
-            }
-        }
-        userInfo.setPermissions(permissions.toArray(new String[permissions.size()]));
-        return userInfo;
-    }
+    private SysRolePermissionService sysRolePermissionService;
 
     @Override
     public UserVO findUserByUsername(String username) {
-        return sysUserMapper.selectUserVoByUsername(username);
+        final UserVO userVO = sysUserMapper.selectUserVoByUsername(username);
+        if (userVO == null) {
+            return null;
+        }
+        final List<SysRole> roleList = userVO.getRoleList();
+        if (!CollectionUtils.isEmpty(roleList)) {
+            userVO.setPermissions(sysRolePermissionService
+                    .getRolePermissions(roleList.stream().map(SysRole::getRoleId).collect(Collectors.toSet())));
+        }
+        return userVO;
     }
 
     /**
@@ -119,14 +86,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public Page selectWithRolePage(Query query, UserVO userVO) {
-        DataScope dataScope = new DataScope();
-        dataScope.setScopeName("deptId");
-        dataScope.setIsOnly(true);
-        dataScope.setDeptIds(getChildDepts(userVO));
-        Object username = query.getCondition().get("username");
-        query.setRecords(sysUserMapper.selectUserVoPageDataScope(query, username, dataScope));
-        return query;
+    public IPage<UserVO> selectPage(PageQuery pageQuery, String username) {
+        return sysUserMapper.selectPageVo(pageQuery, username);
     }
 
     /**
@@ -148,7 +109,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public void saveImageCode(String randomStr, String imageCode) {
-        redisTemplate.opsForValue().set(SecurityConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+        redisRepository.setExpire(CacheConstants.DEFAULT_CODE_KEY + randomStr, imageCode, SecurityConstants.DEFAULT_IMAGE_EXPIRE);
+    }
+
+    @Override
+    public Boolean addUser(final UserDTO userDto) {
+        final String username = userDto.getUsername();
+        final String phone = userDto.getPhone();
+        if (findUserByUsername(username) != null) {
+            throw new InvalidParamException("用户名:" + username + ", 已经存在");
+        }
+        if (findUserByMobile(phone) != null) {
+            throw new InvalidParamException("手机号:" + phone + ", 已经存在");
+        }
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(userDto, sysUser);
+        sysUser.setDelFlag(CommonConstant.STATUS_NORMAL);
+        sysUser.setPassword(ENCODER.encode(userDto.getNewpassword1()));
+        return this.save(sysUser);
     }
 
     /**
@@ -164,7 +142,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public Response sendSmsCode(String mobile) {
-        Object tempCode = redisTemplate.opsForValue().get(SecurityConstants.DEFAULT_CODE_KEY + mobile);
+        Object tempCode = redisRepository.get(CacheConstants.DEFAULT_CODE_KEY + mobile);
         if (tempCode != null) {
             log.error("用户:{}验证码未失效{}", mobile, tempCode);
             return Response.failure("验证码未失效，请失效后再次申请");
@@ -172,7 +150,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         SysUser params = new SysUser();
         params.setPhone(mobile);
-        List<SysUser> userList = this.selectList(new EntityWrapper<>(params));
+        List<SysUser> userList = this.list(new QueryWrapper<>(params));
 
         if (CollectionUtils.isEmpty(userList)) {
             log.error("根据用户手机号{}查询用户为空", mobile);
@@ -181,23 +159,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         String code = RandomUtil.randomNumbers(4);
         log.info("短信发送请求消息中心 -> 手机号:{} -> 验证码：{}", mobile, code);
-        redisTemplate
-                .opsForValue()
-                .set(SecurityConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE, TimeUnit.SECONDS);
+        redisRepository.setExpire(CacheConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE);
         return Response.success(true);
     }
 
-    /**
-     * 删除用户
-     *
-     * @param sysUser 用户
-     * @return Boolean
-     */
     @Override
-    public Boolean deleteUserById(SysUser sysUser) {
-        sysUserRoleService.deleteByUserId(sysUser.getUserId());
-        this.deleteById(sysUser.getUserId());
-        return Boolean.TRUE;
+    public Boolean deleteUserById(Integer id) {
+        SysUser sysUser = this.getById(id);
+        if (sysUser == null) {
+            throw new InvalidParamException("无效的用户ID");
+        }
+        if (CommonConstant.ADMIN_USER_NAME.equals(sysUser.getUsername())) {
+            throw new InvalidParamException("不允许删除超级管理员");
+        }
+        sysUser.setDelFlag(CommonConstant.STATUS_DEL);
+        return this.updateById(sysUser);
     }
 
     @Override
@@ -225,38 +201,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         BeanUtils.copyProperties(userDto, sysUser);
         sysUser.setUpdateTime(new Date());
         this.updateById(sysUser);
-
-        SysUserRole condition = new SysUserRole();
-        condition.setUserId(userDto.getUserId());
-        sysUserRoleService.delete(new EntityWrapper<>(condition));
-        userDto.getRole().forEach(roleId -> {
-            SysUserRole userRole = new SysUserRole();
-            userRole.setUserId(sysUser.getUserId());
-            userRole.setRoleId(roleId);
-            userRole.insert();
-        });
         return Boolean.TRUE;
-    }
-
-    /**
-     * 获取当前用户的子部门信息
-     *
-     * @param userVO 用户信息
-     * @return 子部门列表
-     */
-    private List<Integer> getChildDepts(UserVO userVO) {
-        UserVO userVo = findUserByUsername(userVO.getUsername());
-        Integer deptId = userVo.getDeptId();
-
-        //获取当前部门的子部门
-        SysDeptRelation deptRelation = new SysDeptRelation();
-        deptRelation.setAncestor(deptId);
-        List<SysDeptRelation> deptRelationList = sysDeptRelationService.selectList(new EntityWrapper<>(deptRelation));
-        List<Integer> deptIds = new ArrayList<>();
-        for (SysDeptRelation sysDeptRelation : deptRelationList) {
-            deptIds.add(sysDeptRelation.getDescendant());
-        }
-        return deptIds;
     }
 
 }

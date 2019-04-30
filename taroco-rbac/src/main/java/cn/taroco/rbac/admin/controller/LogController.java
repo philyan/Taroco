@@ -2,17 +2,27 @@ package cn.taroco.rbac.admin.controller;
 
 
 import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.RoleConst;
 import cn.taroco.common.entity.SysLog;
-import cn.taroco.common.exception.ClientException;
-import cn.taroco.common.utils.Query;
+import cn.taroco.common.exception.InvalidParamException;
+import cn.taroco.common.utils.PageQuery;
 import cn.taroco.common.web.BaseController;
 import cn.taroco.common.web.Response;
+import cn.taroco.common.web.annotation.RequireRole;
 import cn.taroco.rbac.admin.service.SysLogService;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -38,9 +48,15 @@ public class LogController extends BaseController {
      * @return 分页对象
      */
     @GetMapping("/logPage")
+    @RequireRole(RoleConst.ADMIN)
     public Page logPage(@RequestParam Map<String, Object> params) {
-        params.put(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
-        return sysLogService.selectPage(new Query<>(params), new EntityWrapper<>());
+        final QueryWrapper<SysLog> query = new QueryWrapper<>();
+        query.eq(CommonConstant.DEL_FLAG, CommonConstant.STATUS_NORMAL);
+        final String typeKey = "type";
+        if (params.containsKey(typeKey) && !ObjectUtils.isEmpty(params.get(typeKey))) {
+            query.eq(typeKey, params.get(typeKey));
+        }
+        return (Page) sysLogService.page(new PageQuery<>(params), query);
     }
 
     /**
@@ -50,6 +66,7 @@ public class LogController extends BaseController {
      * @return success/false
      */
     @DeleteMapping("/{id}")
+    @RequireRole(RoleConst.ADMIN)
     public Response delete(@PathVariable Long id) {
         return Response.success(sysLogService.updateByLogId(id));
     }
@@ -63,8 +80,8 @@ public class LogController extends BaseController {
     @PostMapping
     public void add(@Valid @RequestBody SysLog log, BindingResult result) {
         if (result.hasErrors()) {
-            throw new ClientException(result.getAllErrors().get(0).getDefaultMessage());
+            throw new InvalidParamException(result.getAllErrors().get(0).getDefaultMessage());
         }
-        sysLogService.insert(log);
+        sysLogService.save(log);
     }
 }

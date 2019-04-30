@@ -1,0 +1,11 @@
+服务端生成公钥和密钥，每个客户端使用获取到的公钥到服务器做认证。
+
+1. 生成jks证书文件
+    keytool -genkeypair -alias [your alias] -keyalg RSA -keypass [your key pass] -keystore [your jks filename] -storepass [your store pass]
+
+2. 导出公钥
+    keytool -list -rfc --keystore [your jks filename] | openssl x509 -inform pem -pubkey
+
+3. 使用导出的公钥生成公钥文本: 如 pubkey.txt
+
+4. 可以将pubkey.txt放到客户端resources目录下, 通过公钥解析jwt token

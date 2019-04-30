@@ -6,27 +6,31 @@ spring:
     name: taroco-rbac-service
   profiles:
     active: dev
-  cloud:
-    config:
-      fail-fast: true
-      profile: ${spring.profiles.active}
-      label: master
-      discovery:
-        service-id: taroco-config
-        enabled: true
 
 ---
 spring:
   profiles: dev
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:9000/eureka
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        shared-dataids: application-${spring.profiles}.yml
+        namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
 
 ---
 spring:
-  profiles: test
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://taroco-registry:9000/eureka
+  profiles: show
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.31.213.39:8848
+        namespace: 282b0efc-75d8-488e-8c29-3037a06f64ed
+      config:
+        server-addr: 172.31.213.39:8848
+        file-extension: yml
+        shared-dataids: application-${spring.profiles}.yml
+        namespace: 282b0efc-75d8-488e-8c29-3037a06f64ed

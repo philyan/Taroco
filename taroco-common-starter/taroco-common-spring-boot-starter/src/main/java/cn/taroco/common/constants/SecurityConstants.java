@@ -6,29 +6,61 @@ package cn.taroco.common.constants;
  * @author liuht
  */
 public interface SecurityConstants {
+
     /**
-     * TAROCO公共前缀
+     * token请求头名称
      */
-    String TAROCO_PREFIX = "taroco:";
+    String TOKEN_HEADER = "Authorization";
+
     /**
      * 用户信息头
      */
-    String USER_HEADER = "x-user-header";
+    String USER_HEADER = "x-user-name";
 
     /**
      * 角色信息头
      */
-    String ROLE_HEADER = "x-role-header";
+    String USER_ROLE_HEADER = "x-user-role";
+
+    /**
+     * 角色权限头
+     */
+    String USER_PERMISSION_HEADER = "x-user-permission";
+
+    /**
+     * 标签 header key
+     */
+    String HEADER_LABEL = "x-label";
+
+    /**
+     * 标签 header 分隔符
+     */
+    String HEADER_LABEL_SPLIT = ",";
+
+    /**
+     * 标签或 名称
+     */
+    String LABEL_OR = "labelOr";
+
+    /**
+     * 标签且 名称
+     */
+    String LABEL_AND = "labelAnd";
+
+    /**
+     * 权重key
+     */
+    String WEIGHT_KEY = "weight";
+
+    /**
+     * license key
+     */
+    String LICENSE_KEY = "license";
 
     /**
      * 项目的license
      */
     String LICENSE = "made by taroco";
-
-    /**
-     * 基础角色
-     */
-    String BASE_ROLE = "ROLE_USER";
 
     /**
      * 授权码模式
@@ -91,19 +123,9 @@ public interface SecurityConstants {
     String DEFAULT_CHAR_SPACE = "5";
 
     /**
-     * 默认保存code的前缀
-     */
-    String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
-
-    /**
      * 验证码文字大小
      */
     String DEFAULT_IMAGE_FONT_SIZE = "30";
-
-    /**
-     * token-uservo
-     */
-    String TOKEN_USER_DETAIL = "token-user-detail";
 
     /**
      * sys_oauth_client_details 表的字段，不包括client_id、client_secret

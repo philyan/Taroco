@@ -5,8 +5,8 @@ import cn.taroco.common.vo.MenuVO;
 import cn.taroco.rbac.admin.mapper.SysMenuMapper;
 import cn.taroco.rbac.admin.model.entity.SysMenu;
 import cn.taroco.rbac.admin.service.SysMenuService;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     public Boolean deleteMenu(Integer id) {
         // 删除当前节点
         SysMenu condition1 = new SysMenu();
-        condition1.setMenuId(id);
+        condition1.setId(id);
         condition1.setDelFlag(CommonConstant.STATUS_DEL);
         this.updateById(condition1);
 
@@ -43,7 +43,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         conditon2.setParentId(id);
         SysMenu sysMenu = new SysMenu();
         sysMenu.setDelFlag(CommonConstant.STATUS_DEL);
-        return this.update(sysMenu, new EntityWrapper<>(conditon2));
+        return this.update(sysMenu, new UpdateWrapper<>(conditon2));
     }
 
     @Override

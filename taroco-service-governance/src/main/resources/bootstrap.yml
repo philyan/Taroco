@@ -1,0 +1,36 @@
+server:
+  port: 9002
+
+spring:
+  application:
+    name: taroco-service-governance
+  profiles:
+    active: dev
+
+---
+spring:
+  profiles: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        shared-dataids: application-${spring.profiles}.yml
+        namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
+
+---
+spring:
+  profiles: show
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.31.213.39:8848
+        namespace: 282b0efc-75d8-488e-8c29-3037a06f64ed
+      config:
+        server-addr: 172.31.213.39:8848
+        file-extension: yml
+        shared-dataids: application-${spring.profiles}.yml
+        namespace: 282b0efc-75d8-488e-8c29-3037a06f64ed

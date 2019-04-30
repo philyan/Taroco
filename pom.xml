@@ -9,10 +9,10 @@
     <modules>
         <module>taroco-common-starter</module>
         <module>taroco-docs</module>
-        <module>taroco-cloud</module>
         <module>taroco-gateway</module>
         <module>taroco-authentication</module>
         <module>taroco-rbac</module>
+        <module>taroco-service-governance</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -32,17 +32,17 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <!-- 版本属性 -->
+        <spring-cloud-alibaba.version>0.2.2.RELEASE</spring-cloud-alibaba.version>
         <spring-cloud.version>Finchley.SR1</spring-cloud.version>
+        <spring-cloud-zuul-ratelimit.version>2.2.2.RELEASE</spring-cloud-zuul-ratelimit.version>
         <spring-security-oauth2.version>2.3.2.RELEASE</spring-security-oauth2.version>
         <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
-        <spring-boot-admin.version>2.0.3</spring-boot-admin.version>
-        <springfox.version>2.5.0</springfox.version>
+        <spring-boot-admin.version>2.0.5</spring-boot-admin.version>
+        <springfox.version>2.8.0</springfox.version>
         <httpclient.version>4.5.5</httpclient.version>
-        <mybatis-spring.version>1.3.1</mybatis-spring.version>
-        <pagehelper.version>5.0.0</pagehelper.version>
+        <mybatis-plus.version>3.0.7.1</mybatis-plus.version>
         <mysql.version>5.1.21</mysql.version>
-        <druid.version>1.0.31</druid.version>
-        <fastjson.version>1.2.10</fastjson.version>
+        <fastjson.version>1.2.50</fastjson.version>
         <zxing.version>3.2.0</zxing.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <commons-lang3.version>3.4</commons-lang3.version>
@@ -50,24 +50,28 @@
         <commons-codec.version>1.10</commons-codec.version>
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
         <commons-net.version>3.4</commons-net.version>
-        <guava.version>19.0</guava.version>
+        <guava.version>26.0-jre</guava.version>
         <curator-recipes.version>2.10.0</curator-recipes.version>
         <zookeeper.version>3.4.9</zookeeper.version>
-        <swagger.version>2.7.0</swagger.version>
         <kaptcha.version>0.0.9</kaptcha.version>
         <javadoc.version>3.0.0</javadoc.version>
-        <mybatis-plus.version>2.1.9</mybatis-plus.version>
         <jasypt.version>1.18</jasypt.version>
         <ttl.version>2.2.0</ttl.version>
         <hutool.version>3.3.2</hutool.version>
         <jjwt.version>0.9.0</jjwt.version>
         <velocity-engine-core.version>2.0</velocity-engine-core.version>
-        <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
-        <spring-cloud-zuul-ratelimit.version>2.2.2.RELEASE</spring-cloud-zuul-ratelimit.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud Alibaba -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Spring cloud -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -132,16 +136,10 @@
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-            <!-- mybatis-plus start -->
+            <!-- mybatis-plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatisplus-spring-boot-starter</artifactId>
-                <version>${mybatisplus-spring-boot-starter.version}</version>
-            </dependency>
-            <!--mybatis-plus-->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!--myabtis-plus 代码生成依赖-->
@@ -221,29 +219,11 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${springfox.version}</version>
             </dependency>
-            <!-- mybatis -->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring.version}</version>
-            </dependency>
-            <!-- mybatis 分页插件 pagehelper-->
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>
             <!-- mysql -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
-            </dependency>
-            <!-- alibaba数据库连接池druid -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
-                <version>${druid.version}</version>
             </dependency>
             <!-- alibaba JSON类库 -->
             <dependency>
@@ -307,15 +287,15 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <!-- eureka-client -->
+        <!-- nacos discovery -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-        <!-- cloud config -->
+        <!-- nacos config -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
     </dependencies>
 </project>

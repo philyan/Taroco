@@ -1,9 +1,7 @@
 package cn.taroco.oauth2.server.controller;
 
-import cn.taroco.common.constants.SecurityConstants;
 import cn.taroco.common.web.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,13 +31,6 @@ public class AuthenticationController {
         return new ModelAndView("ftl/login");
     }
 
-    @PostMapping("/loginSuccess")
-    public Response loginSuccess(Authentication authentication) {
-        Response response = Response.success(authentication);
-        response.setExtMessage("登录成功");
-        return response;
-    }
-
     /**
      * 用户信息校验
      *
@@ -48,17 +39,19 @@ public class AuthenticationController {
      */
     @RequestMapping("/user")
     public Object user(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
         return authentication.getPrincipal();
     }
 
     /**
-     * 清除Redis中 accesstoken refreshtoken
+     * 清除 accesstoken
      *
      * @param accesstoken accesstoken
      * @return true/false
      */
     @PostMapping("/removeToken")
-    @CacheEvict(value = SecurityConstants.TOKEN_USER_DETAIL, key = "#accesstoken")
     public Response removeToken(String accesstoken) {
         return Response.success(consumerTokenServices.revokeToken(accesstoken));
     }

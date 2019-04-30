@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
  * @date 2018年05月10日
  */
 @Slf4j
-@RefreshScope
 @Component
 @ConditionalOnProperty(value = "security.validate.preview", havingValue = "true")
 public class PreviewFilter extends ZuulFilter {

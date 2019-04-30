@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS zipkin_spans (
   `name` VARCHAR(255) NOT NULL,
   `parent_id` BIGINT,
   `debug` BIT(1),
-  `start_ts` BIGINT COMMENT 'Span.timestamp(): epoch micros used for endTs query and to implement TTL',
-  `duration` BIGINT COMMENT 'Span.duration(): micros used for minDuration and maxDuration query'
+  `start_ts` BIGINT COMMENT 'Span.timestamp(): epoch micros used for endTs pageQuery and to implement TTL',
+  `duration` BIGINT COMMENT 'Span.duration(): micros used for minDuration and maxDuration pageQuery'
 ) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8 COLLATE utf8_general_ci;
 
 ALTER TABLE zipkin_spans ADD UNIQUE KEY(`trace_id_high`, `trace_id`, `id`) COMMENT 'ignore insert on duplicate';

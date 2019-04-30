@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -38,7 +39,7 @@ public class DefaultExceptionAdvice {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionAdvice.class);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({HttpMessageNotReadableException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, })
     public ResponseEntity handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         LOGGER.error("参数解析失败", e);
         Response response = Response.failure(DefaultError.INVALID_PARAMETER);
@@ -84,20 +85,17 @@ public class DefaultExceptionAdvice {
         LOGGER.error("未知异常", ex);
         IError error;
         String extMessage = null;
-        if (ex instanceof BusinessException) {
-            error = ((BusinessException) ex).getError();
-            extMessage = ((BusinessException) ex).getExtMessage();
-        } else if (ex instanceof BindException) {
+        if (ex instanceof BindException) {
             error = DefaultError.INVALID_PARAMETER;
             List<ObjectError> errors = ((BindException) ex).getAllErrors();
-            if (errors != null && errors.size() != 0) {
+            if (errors.size() != 0) {
                 StringBuilder msg = new StringBuilder();
                 for (ObjectError objectError : errors) {
-                    msg.append("Field error in object '" + objectError.getObjectName() + " ");
+                    msg.append("Field error in object '").append(objectError.getObjectName()).append(" ");
                     if (objectError instanceof FieldError) {
-                        msg.append("on field " + ((FieldError) objectError).getField() + " ");
+                        msg.append("on field ").append(((FieldError) objectError).getField()).append(" ");
                     }
-                    msg.append(objectError.getDefaultMessage() + " ");
+                    msg.append(objectError.getDefaultMessage()).append(" ");
                 }
                 extMessage = msg.toString();
             }
@@ -109,7 +107,7 @@ public class DefaultExceptionAdvice {
             Set<ConstraintViolation<?>> violations = ((ConstraintViolationException) ex).getConstraintViolations();
             final StringBuilder msg = new StringBuilder();
             for (ConstraintViolation<?> constraintViolation : violations) {
-                msg.append(constraintViolation.getPropertyPath()).append(":").append(constraintViolation.getMessage() + "\n");
+                msg.append(constraintViolation.getPropertyPath()).append(":").append(constraintViolation.getMessage()).append("\n");
             }
             extMessage = msg.toString();
         } else if (ex instanceof HttpMediaTypeNotSupportedException) {
@@ -120,7 +118,12 @@ public class DefaultExceptionAdvice {
             extMessage = ex.getMessage();
         } else if (ex instanceof MethodArgumentNotValidException) {
             error = DefaultError.INVALID_PARAMETER;
-            extMessage = ex.getMessage();
+            final BindingResult result = ((MethodArgumentNotValidException) ex).getBindingResult();
+            if (result.hasErrors()) {
+                extMessage = result.getAllErrors().get(0).getDefaultMessage();
+            } else {
+                extMessage = ex.getMessage();
+            }
         } else if (ex instanceof HttpRequestMethodNotSupportedException) {
             error = DefaultError.METHOD_NOT_SUPPORTED;
             extMessage = ex.getMessage();
@@ -153,6 +156,19 @@ public class DefaultExceptionAdvice {
     }
 
     /**
+     * InvalidParamException 参数校验异常
+     *
+     * @return ResponseEntity
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @ExceptionHandler(InvalidParamException.class)
+    public ResponseEntity handleException(InvalidParamException e) {
+        LOGGER.error("参数验证失败", e);
+        Response response = Response.failure(e.getError());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
      * ClientException 客户端异常 给调用者 app,移动端调用
      *
      * @return ResponseEntity
@@ -174,19 +190,6 @@ public class DefaultExceptionAdvice {
     @ExceptionHandler(ServerException.class)
     public ResponseEntity handleException(ServerException e) {
         Response response = Response.failure(DefaultError.SERVER_EXCEPTION);
-        response.setExtMessage(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * SystemException 系统异常 一般指系统基础服务产生的异常
-     *
-     * @return ResponseEntity
-     */
-    @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(SystemException.class)
-    public ResponseEntity handleException(SystemException e) {
-        Response response = Response.failure(DefaultError.SYSTEM_INTERNAL_ERROR);
         response.setExtMessage(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

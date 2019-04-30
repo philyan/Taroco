@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 系统用户
@@ -71,4 +72,9 @@ public class UserVO implements Serializable {
      * 角色列表
      */
     private List<SysRole> roleList;
+
+    /**
+     * 权限列表
+     */
+    private Set<String> permissions;
 }

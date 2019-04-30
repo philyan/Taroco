@@ -1,6 +1,6 @@
 package cn.taroco.common.ribbon;
 
-import cn.taroco.common.constants.CommonConstant;
+import cn.taroco.common.constants.SecurityConstants;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class XlabelMvcHeaderInterceptor extends HandlerInterceptorAdapter {
         }
 
         if (!StringUtils.isEmpty(labels)) {
-            XlabelMvcHeaderInterceptor.LABEL.set(Arrays.asList(labels.split(CommonConstant.HEADER_LABEL_SPLIT)));
+            XlabelMvcHeaderInterceptor.LABEL.set(Arrays.asList(labels.split(SecurityConstants.HEADER_LABEL_SPLIT)));
         } else {
             XlabelMvcHeaderInterceptor.LABEL.set(Collections.emptyList());
         }
@@ -55,7 +55,7 @@ public class XlabelMvcHeaderInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        final String labels = request.getHeader(CommonConstant.HEADER_LABEL);
+        final String labels = request.getHeader(SecurityConstants.HEADER_LABEL);
         XlabelMvcHeaderInterceptor.initHystrixRequestContext(labels);
         log.debug("Pass x-label by spring mvc: " + labels);
         return true;

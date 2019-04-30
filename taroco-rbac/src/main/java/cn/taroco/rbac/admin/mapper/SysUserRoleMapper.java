@@ -2,7 +2,7 @@ package cn.taroco.rbac.admin.mapper;
 
 
 import cn.taroco.rbac.admin.model.entity.SysUserRole;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -19,8 +19,6 @@ public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
      *
      * @param userId 用户ID
      * @return boolean
-     * @author 寻欢·李
-     * @date 2017年12月7日 16:31:38
      */
     Boolean deleteByUserId(@Param("userId") Integer userId);
 }

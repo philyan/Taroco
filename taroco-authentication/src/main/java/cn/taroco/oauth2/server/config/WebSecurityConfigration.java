@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -39,17 +40,21 @@ public class WebSecurityConfigration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry =
                 http
-                    .formLogin()
-                    .loginPage("/authentication/require")
-                    .loginProcessingUrl("/authentication/form")
-                    .successForwardUrl("/authentication/loginSuccess")
-                    .failureUrl("/authentication/require?error=true")
-                    .and()
-                    .authorizeRequests();
+                        .formLogin()
+                        .loginPage("/authentication/require").permitAll()
+                        .loginProcessingUrl("/authentication/form")
+                        .failureUrl("/authentication/require?error=true")
+                        .and().logout().logoutUrl("/authentication/logout").permitAll().logoutSuccessUrl("/authentication/require?logout=true")
+                        .and().authorizeRequests();
 
         final List<String> urlPermitAll = oauth2Properties.getUrlPermitAll();
         urlPermitAll.forEach(url -> registry.antMatchers(url).permitAll());
         registry.anyRequest().authenticated().and().csrf().disable();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/static/**");
     }
 
     /**
