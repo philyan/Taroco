@@ -141,6 +141,7 @@ header{
 	width: 300px;
 	height: 40px;
 	margin:  10px auto;
+	padding-bottom: 20px;
 }
 .form_btn button{
 	width: 100%;

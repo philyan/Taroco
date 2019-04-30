@@ -32,7 +32,6 @@ import java.nio.charset.Charset;
  * security.validate.code 默认 为false，开启需要设置为true
  */
 @Slf4j
-@RefreshScope
 @Component("validateCodeFilter")
 @ConditionalOnProperty(value = "security.validate.code", havingValue = "true")
 public class ValidateCodeFilter extends ZuulFilter {

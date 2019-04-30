@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>登录界面</title>
+    <title>Taroco-Login</title>
     <link rel="stylesheet" href="/css/reset.css"/>
     <link rel="stylesheet" href="/css/common.css"/>
     <link rel="stylesheet" href="/css/font-awesome.min.css"/>
@@ -17,43 +17,47 @@
             <div class="login_form">
                 <div class="login_title">
                     登录
+                    <#if Session.SPRING_SECURITY_LAST_EXCEPTION?exists>
+                        <div class="_warning">
+                            ${Session.SPRING_SECURITY_LAST_EXCEPTION.message}
+                        </div>
+                    </#if>
                 </div>
                 <form action="/authentication/form" method="post">
 
                     <div class="form_text_ipt">
-                        <input name="username" type="text" placeholder="手机号/邮箱" value="admin">
+                        <input name="username" type="text" placeholder="请输入用户名称" value="admin">
                     </div>
                     <div class="ececk_warning"><span>手机号/邮箱不能为空</span></div>
-                    <div class="_warning"><span>${message!''}</span></div>
                     <div class="form_text_ipt">
-                        <input name="password" type="password" placeholder="密码" value="123456">
+                        <input name="password" type="password" placeholder="请输入用户密码" value="123456">
                     </div>
                     <div class="ececk_warning"><span>密码不能为空</span></div>
-                    <div class="form_check_ipt">
-                        <div class="left check_left">
-                            <label><input name="remember-me" type="checkbox"> 下次自动登录</label>
-                        </div>
-                        <div class="right check_right">
-                            <a href="#">忘记密码</a>
-                        </div>
-                    </div>
+                    <#--<div class="form_check_ipt">-->
+                        <#--<div class="left check_left">-->
+                            <#--<label><input name="remember-me" type="checkbox"> 下次自动登录</label>-->
+                        <#--</div>-->
+                        <#--<div class="right check_right">-->
+                            <#--<a href="#">忘记密码</a>-->
+                        <#--</div>-->
+                    <#--</div>-->
                     <div class="form_btn">
                         <button type="submit">登录</button>
                     </div>
-                    <div class="form_reg_btn">
-                        <span>还没有帐号？</span><a href="/register">马上注册</a>
-                    </div>
+                    <#--<div class="form_reg_btn">-->
+                        <#--<span>还没有帐号？</span><a href="/register">马上注册</a>-->
+                    <#--</div>-->
                 </form>
-                <div class="other_login">
-                    <div class="left other_left">
-                        <span>其它登录方式</span>&nbsp;&nbsp;<a href="/authentication/mobilePage">短信登录</a>
-                    </div>
-                    <div class="right other_right">
-                        <a href="/login/qq"><i class="fa fa-qq fa-2x"></i></a>
-                        <a href="/login/weixin"><i class="fa fa-weixin fa-2x"></i></a>
-                        <a href="/login/weibo"><i class="fa fa-weibo fa-2x"></i></a>
-                    </div>
-                </div>
+                <#--<div class="other_login">-->
+                    <#--<div class="left other_left">-->
+                        <#--<span>其它登录方式</span>&nbsp;&nbsp;<a href="/authentication/mobilePage">短信登录</a>-->
+                    <#--</div>-->
+                    <#--<div class="right other_right">-->
+                        <#--<a href="/login/qq"><i class="fa fa-qq fa-2x"></i></a>-->
+                        <#--<a href="/login/weixin"><i class="fa fa-weixin fa-2x"></i></a>-->
+                        <#--<a href="/login/weibo"><i class="fa fa-weibo fa-2x"></i></a>-->
+                    <#--</div>-->
+                <#--</div>-->
             </div>
         </div>
     </div>

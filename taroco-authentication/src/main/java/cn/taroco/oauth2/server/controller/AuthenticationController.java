@@ -31,13 +31,6 @@ public class AuthenticationController {
         return new ModelAndView("ftl/login");
     }
 
-    @PostMapping("/loginSuccess")
-    public Response loginSuccess(Authentication authentication) {
-        Response response = Response.success(authentication);
-        response.setExtMessage("登录成功");
-        return response;
-    }
-
     /**
      * 用户信息校验
      *
