@@ -34,6 +34,10 @@ public enum DefaultError implements IError {
      */
     PARAMETER_MIN_LENGTH("0005", "参数过短"),
     /**
+     * 认证失败
+     */
+    AUTHENTICATION_ERROR("0006", "认证失败"),
+    /**
      * 请求方法出错
      */
     METHOD_NOT_SUPPORTED("0008", "请求方法出错"),

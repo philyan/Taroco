@@ -2,6 +2,10 @@ package cn.taroco.oauth2.server.config;
 
 import cn.taroco.common.config.TarocoOauth2Properties;
 import cn.taroco.common.constants.SecurityConstants;
+import cn.taroco.oauth2.server.exception.CustomerAccessDeniedHandler;
+import cn.taroco.oauth2.server.exception.CustomerExceptionEntryPoint;
+import cn.taroco.oauth2.server.exception.CustomerWebResponseExceptionTranslator;
+import cn.taroco.oauth2.server.filter.CustomerAuthenticationFilter;
 import cn.taroco.oauth2.server.userdetails.MyUserDetails;
 import com.xiaoleilu.hutool.collection.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +54,18 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private CustomerWebResponseExceptionTranslator exceptionTranslator;
+
+    @Autowired
+    private CustomerExceptionEntryPoint exceptionEntryPoint;
+
+    @Autowired
+    private CustomerAccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
+    private CustomerAuthenticationFilter customerAuthenticationFilter;
 
     @Autowired
     private DataSource dataSource;
@@ -135,7 +151,8 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
         endpoints
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-                .tokenServices(defaultTokenServices);
+                .tokenServices(defaultTokenServices)
+                .exceptionTranslator(exceptionTranslator);
     }
 
     /**
@@ -146,7 +163,8 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
         security
                 .tokenKeyAccess("isAuthenticated()")
                 .checkTokenAccess("permitAll()")
-                // 让/oauth/token支持client_id以及client_secret作登录认证
-                .allowFormAuthenticationForClients();
+                .authenticationEntryPoint(exceptionEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+                .addTokenEndpointAuthenticationFilter(customerAuthenticationFilter);
     }
 }

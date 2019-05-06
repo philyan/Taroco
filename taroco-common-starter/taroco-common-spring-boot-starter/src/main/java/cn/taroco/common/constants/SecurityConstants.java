@@ -8,9 +8,29 @@ package cn.taroco.common.constants;
 public interface SecurityConstants {
 
     /**
-     * token请求头名称
+     * basic
      */
-    String TOKEN_HEADER = "Authorization";
+    String BASIC = "basic";
+
+    /**
+     * client_id
+     */
+    String CLIENT_ID = "client_id";
+
+    /**
+     * client_secret
+     */
+    String CLIENT_SECRET = "client_secret";
+
+    /**
+     * grant_type
+     */
+    String GRANT_TYPE = "grant_type";
+
+    /**
+     * AUTHORIZATION name
+     */
+    String AUTHORIZATION = "Authorization";
 
     /**
      * 用户信息头

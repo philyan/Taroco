@@ -2,11 +2,10 @@ package cn.taroco.gateway.handler;
 
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.exception.DefaultError;
+import cn.taroco.common.utils.JsonUtils;
 import cn.taroco.common.web.Response;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
@@ -16,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler
@@ -26,9 +24,7 @@ import java.io.PrintWriter;
  */
 @Slf4j
 @Component
-public class TarocoAccessDeniedHandler extends OAuth2AccessDeniedHandler {
-    @Autowired
-    private ObjectMapper objectMapper;
+public class CustomerAccessDeniedHandler extends OAuth2AccessDeniedHandler {
 
     /**
      * 授权拒绝处理，使用R包装
@@ -46,7 +42,6 @@ public class TarocoAccessDeniedHandler extends OAuth2AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         Response result = Response.failure(DefaultError.ACCESS_DENIED);
         response.setStatus(HttpStatus.SC_FORBIDDEN);
-        PrintWriter printWriter = response.getWriter();
-        printWriter.append(objectMapper.writeValueAsString(result));
+        response.getWriter().write(JsonUtils.toJsonString(result));
     }
 }
