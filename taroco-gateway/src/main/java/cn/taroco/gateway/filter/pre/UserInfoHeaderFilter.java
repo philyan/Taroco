@@ -90,7 +90,7 @@ public class UserInfoHeaderFilter extends ZuulFilter {
      * @return The token, or null if no OAuth authorization header was supplied.
      */
     private String extractHeaderToken(HttpServletRequest request) {
-        Enumeration<String> headers = request.getHeaders(SecurityConstants.TOKEN_HEADER);
+        Enumeration<String> headers = request.getHeaders(SecurityConstants.AUTHORIZATION);
         while (headers.hasMoreElements()) {
             String value = headers.nextElement();
             if ((value.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase()))) {
