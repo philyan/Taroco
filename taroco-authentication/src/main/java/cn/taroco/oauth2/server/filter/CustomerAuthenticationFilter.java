@@ -51,9 +51,9 @@ public class CustomerAuthenticationFilter extends OncePerRequestFilter {
         String[] clientDetails = this.isHasClientDetails(request);
 
         if (clientDetails == null) {
-            log.warn("No clients info in request header");
+            log.warn("No clients or clients is invalid in request header");
             final Response resp = Response.failure(DefaultError.CLIENT_EXCEPTION);
-            resp.setErrorMessage("No clients info in request header");
+            resp.setErrorMessage("No clients or clients is invalid in request header");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.getWriter().write(JsonUtils.toJsonString(resp));
@@ -79,7 +79,7 @@ public class CustomerAuthenticationFilter extends OncePerRequestFilter {
         } catch (NoSuchClientException e) {
             log.warn("No client with requested id:" + clientDetails[0]);
             final Response resp = Response.failure(DefaultError.CLIENT_EXCEPTION);
-            resp.setErrorMessage("no clients info in request header");
+            resp.setErrorMessage("No client with requested id:" + clientDetails[0]);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.getWriter().write(JsonUtils.toJsonString(resp));
