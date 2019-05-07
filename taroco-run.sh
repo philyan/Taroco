@@ -22,12 +22,12 @@ fi
 rm -rf ${JAR_DIR}/taroco-authentication*.jar
 rm -rf ${JAR_DIR}/taroco-rbac*.jar
 rm -rf ${JAR_DIR}/taroco-service-governance*.jar
-rm -rf ${JAR_DIR}/taroco-gateway*.jar
+rm -rf ${JAR_DIR}/taroco-gateway-zuul*.jar
 
 cp ./taroco-authentication/target/taroco-authentication*.jar ${JAR_DIR}
 cp ./taroco-rbac/target/taroco-rbac*.jar ${JAR_DIR}
 cp ./taroco-service-governance/target/taroco-service-governance*.jar ${JAR_DIR}
-cp ./taroco-gateway/target/taroco-gateway*.jar ${JAR_DIR}
+cp ./taroco-gateway-zuul/target/taroco-gateway-zuul*.jar ${JAR_DIR}
 
 echo -- -- run docker-compose up -- --
 docker-compose -f ${COMPOSE_FILE} up -d --build

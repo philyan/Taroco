@@ -58,7 +58,8 @@ Spring Cloud 本身已经封装得足够简单，也够丰富。也许正是因�
 │   ├── taroco-ribbon-spring-boot-starter --基于ribbon的服务治理扩展
 │   ├── taroco-swagger2-spring-boot-starter --自定义封装swagger2配置
 ├── taroco-docs --文档、截图、docker文件、初始化脚本
-├── taroco-gateway --微服务网关
+├── taroco-gateway-zuul --微服务网关
+├── taroco-oauth2-demo --oauth2 demo项目(客户端、资源服务器、SSO)
 ├── taroco-rbac --基于角色的权限控制服务
 ├── taroco-service-governance --服务治理（Spring Boot Admin）
 
