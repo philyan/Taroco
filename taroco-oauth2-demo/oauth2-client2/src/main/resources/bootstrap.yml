@@ -1,0 +1,39 @@
+server:
+  port: 9004
+  servlet:
+    context-path: /client2
+spring:
+  application:
+    name: taroco-oauth2-client2
+  thymeleaf:
+    cache: false
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        shared-dataids: application-dev.yml
+        namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
+
+security:
+  oauth2:
+    client:
+      # 客户端ID
+      client-id: taroco
+      # 客户端密钥
+      client-secret: taroco
+      # 获取访问令牌的URI
+      access-token-uri: http://localhost:9001/oauth/token
+      # 用户将被重定向到的授权 URI
+      user-authorization-uri: http://localhost:9001/oauth/authorize
+    resource:
+      jwt:
+        # 获取JWT 非对称加密的公钥URI
+        key-uri: http://localhost:9001/oauth/token_key
+
+logging:
+  level:
+    "org.springframework.security.oauth2": debug

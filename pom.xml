@@ -9,10 +9,11 @@
     <modules>
         <module>taroco-common-starter</module>
         <module>taroco-docs</module>
-        <module>taroco-gateway</module>
+        <module>taroco-gateway-zuul</module>
         <module>taroco-authentication</module>
         <module>taroco-rbac</module>
         <module>taroco-service-governance</module>
+        <module>taroco-oauth2-demo</module>
     </modules>
     <packaging>pom</packaging>
 

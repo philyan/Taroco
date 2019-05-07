@@ -36,10 +36,10 @@ services:
     networks:
       - taroco
 
-  taroco-gateway:
+  taroco-gateway-zuul:
     build:
       context: ./
-      dockerfile: Dockerfile-gateway
+      dockerfile: Dockerfile-gateway-zuul
     restart: always
     ports:
       - 9000:9000
@@ -47,7 +47,7 @@ services:
       - taroco-authentication-server
       - taroco-rbac
     volumes:
-      - /data/logs/taroco-gateway/:/logs/taroco-gateway/
+      - /data/logs/taroco-gateway-zuul/:/logs/taroco-gateway-zuul/
     networks:
       - taroco
 
