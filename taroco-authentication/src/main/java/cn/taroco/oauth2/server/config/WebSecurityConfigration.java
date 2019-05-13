@@ -1,6 +1,7 @@
 package cn.taroco.oauth2.server.config;
 
 import cn.taroco.common.config.TarocoOauth2Properties;
+import cn.taroco.oauth2.server.extend.mobile.MobileSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +32,9 @@ public class WebSecurityConfigration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private MobileSecurityConfigurer mobileSecurityConfigurer;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -50,6 +54,8 @@ public class WebSecurityConfigration extends WebSecurityConfigurerAdapter {
         final List<String> urlPermitAll = oauth2Properties.getUrlPermitAll();
         urlPermitAll.forEach(url -> registry.antMatchers(url).permitAll());
         registry.anyRequest().authenticated().and().csrf().disable();
+        // 聚合手机号登录配置
+        http.apply(mobileSecurityConfigurer);
     }
 
     @Override
