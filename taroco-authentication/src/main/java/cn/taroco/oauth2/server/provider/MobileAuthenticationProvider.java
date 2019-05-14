@@ -1,0 +1,93 @@
+package cn.taroco.oauth2.server.provider;
+
+import cn.taroco.common.constants.CacheConstants;
+import cn.taroco.common.redis.template.TarocoRedisRepository;
+import cn.taroco.oauth2.server.token.MobileAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+/**
+ * 定义手机号登录校验逻辑
+ *
+ * @author liuht
+ * 2019/5/13 15:25
+ * @see DaoAuthenticationProvider
+ */
+@Slf4j
+public class MobileAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+
+    private UserDetailsService userDetailsService;
+
+    private TarocoRedisRepository redisRepository;
+
+    @Override
+    protected Authentication createSuccessAuthentication(final Object principal, final Authentication authentication, final UserDetails user) {
+        final MobileAuthenticationToken token = new MobileAuthenticationToken(principal, authentication.getCredentials(), user.getAuthorities());
+        token.setDetails(authentication.getDetails());
+        return token;
+    }
+
+    @Override
+    protected void additionalAuthenticationChecks(final UserDetails userDetails, final Authentication authentication) throws AuthenticationException {
+        if (authentication.getCredentials() == null) {
+            log.error("Authentication failed: no credentials provided");
+            throw new BadCredentialsException(this.messages.getMessage("MobileAuthenticationProvider.badCredentials", "Bad credentials"));
+        } else {
+            final String presentedPassword = authentication.getCredentials().toString();
+            final Object principal = authentication.getPrincipal();
+            final String key = CacheConstants.DEFAULT_CODE_KEY + principal;
+            final String code = redisRepository.get(key);
+            // 校验验证码
+            if (StringUtils.isEmpty(code) || !code.equals(presentedPassword)) {
+                log.error("Authentication failed: verifyCode does not match stored value");
+                throw new BadCredentialsException(this.messages.getMessage("MobileAuthenticationProvider.badCredentials", "Bad verifyCode"));
+            }
+        }
+    }
+
+    @Override
+    protected UserDetails retrieveUser(final String mobile, final Authentication authentication) throws AuthenticationException {
+        UserDetails loadedUser;
+        try {
+            loadedUser = userDetailsService.loadUserByUsername(mobile);
+        } catch (UsernameNotFoundException var6) {
+            throw var6;
+        } catch (Exception var7) {
+            throw new InternalAuthenticationServiceException(var7.getMessage(), var7);
+        }
+        if (loadedUser == null) {
+            throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
+        } else {
+            return loadedUser;
+        }
+    }
+
+    @Override
+    public boolean supports(final Class<?> authentication) {
+        return MobileAuthenticationToken.class.isAssignableFrom(authentication);
+    }
+
+    public UserDetailsService getUserDetailsService() {
+        return userDetailsService;
+    }
+
+    public void setUserDetailsService(final UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    public TarocoRedisRepository getRedisRepository() {
+        return redisRepository;
+    }
+
+    public void setRedisRepository(final TarocoRedisRepository redisRepository) {
+        this.redisRepository = redisRepository;
+    }
+}

@@ -6,6 +6,7 @@ import cn.taroco.oauth2.server.exception.CustomerAccessDeniedHandler;
 import cn.taroco.oauth2.server.exception.CustomerExceptionEntryPoint;
 import cn.taroco.oauth2.server.exception.CustomerWebResponseExceptionTranslator;
 import cn.taroco.oauth2.server.filter.CustomerAuthenticationFilter;
+import cn.taroco.oauth2.server.service.UserNameUserDetailsServiceImpl;
 import cn.taroco.oauth2.server.userdetails.MyUserDetails;
 import com.xiaoleilu.hutool.collection.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -53,7 +53,7 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
     private TarocoOauth2Properties oauth2Properties;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserNameUserDetailsServiceImpl userNameUserDetailsService;
 
     @Autowired
     private CustomerWebResponseExceptionTranslator exceptionTranslator;
@@ -108,7 +108,7 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
                 user = (MyUserDetails) principal;
             } else {
                 final String username = (String) principal;
-                user = (MyUserDetails) userDetailsService.loadUserByUsername(username);
+                user = (MyUserDetails) userNameUserDetailsService.loadUserByUsername(username);
             }
             additionalInfo.put(SecurityConstants.LICENSE_KEY, SecurityConstants.LICENSE);
             additionalInfo.put(SecurityConstants.USER_HEADER, user.getUsername());
@@ -150,7 +150,7 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
 
         endpoints
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService)
+                .userDetailsService(userNameUserDetailsService)
                 .tokenServices(defaultTokenServices)
                 .exceptionTranslator(exceptionTranslator);
     }

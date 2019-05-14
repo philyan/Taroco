@@ -1,7 +1,9 @@
-package cn.taroco.oauth2.server.extend.mobile;
+package cn.taroco.oauth2.server.filter;
 
 import cn.taroco.common.constants.SecurityConstants;
+import cn.taroco.oauth2.server.token.MobileAuthenticationToken;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,7 +25,8 @@ import java.io.IOException;
  */
 public class MobileAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private String mobileParameter = "mobile";
+    private static final String SPRING_SECURITY_RESTFUL_PHONE_KEY = "mobile";
+    private static final String SPRING_SECURITY_RESTFUL_VERIFY_CODE_KEY = "code";
 
     private boolean postOnly = true;
 
@@ -39,40 +42,32 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
                     "Authentication method not supported: " + request.getMethod());
         }
 
-        String mobile = obtainMobile(request);
+        AbstractAuthenticationToken authRequest;
+        String principal;
+        String credentials;
 
-        if (mobile == null) {
-            mobile = "";
-        }
+        // 手机验证码登陆
+        principal = obtainParameter(request, SPRING_SECURITY_RESTFUL_PHONE_KEY);
+        credentials = obtainParameter(request, SPRING_SECURITY_RESTFUL_VERIFY_CODE_KEY);
 
-        mobile = mobile.trim();
-
-        MobileAuthenticationToken mobileAuthenticationToken = new MobileAuthenticationToken(mobile);
-
-        setDetails(request, mobileAuthenticationToken);
-
-        return this.getAuthenticationManager().authenticate(mobileAuthenticationToken);
+        principal = principal.trim();
+        authRequest = new MobileAuthenticationToken(principal, credentials);
+        setDetails(request, authRequest);
+        return this.getAuthenticationManager().authenticate(authRequest);
     }
 
-    protected String obtainMobile(HttpServletRequest request) {
-        return request.getParameter(mobileParameter);
+    private String obtainParameter(HttpServletRequest request, String parameter) {
+        String result =  request.getParameter(parameter);
+        return result == null ? "" : result;
     }
 
     protected void setDetails(HttpServletRequest request,
-                              MobileAuthenticationToken authRequest) {
+                              AbstractAuthenticationToken authRequest) {
         authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
     }
 
     public void setPostOnly(boolean postOnly) {
         this.postOnly = postOnly;
-    }
-
-    public String getMobileParameter() {
-        return mobileParameter;
-    }
-
-    public void setMobileParameter(String mobileParameter) {
-        this.mobileParameter = mobileParameter;
     }
 
     public boolean isPostOnly() {

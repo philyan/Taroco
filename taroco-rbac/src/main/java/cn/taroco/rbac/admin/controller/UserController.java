@@ -119,6 +119,17 @@ public class UserController extends BaseController {
     }
 
     /**
+     * 发送手机验证码
+     *
+     * @param mobile
+     * @return
+     */
+    @GetMapping("/smsCode/{mobile}")
+    public Response sendSmsCode(@PathVariable String mobile) {
+        return userService.sendSmsCode(mobile);
+    }
+
+    /**
      * 分页查询用户
      *
      * @param params 参数集

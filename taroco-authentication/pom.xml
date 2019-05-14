@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>cn.taroco</groupId>
+            <artifactId>taroco-redis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.taroco</groupId>
             <artifactId>taroco-ribbon-spring-boot-starter</artifactId>
             <exclusions>
                 <exclusion>
@@ -56,6 +60,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.webjars</groupId>-->
+<!--            <artifactId>Semantic-UI</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.webjars</groupId>-->
+<!--            <artifactId>jquery</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.webjars</groupId>-->
+<!--            <artifactId>webjars-locator</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

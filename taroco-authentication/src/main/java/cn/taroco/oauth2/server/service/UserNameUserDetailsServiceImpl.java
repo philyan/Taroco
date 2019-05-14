@@ -3,11 +3,8 @@ package cn.taroco.oauth2.server.service;
 import cn.taroco.common.constants.CommonConstant;
 import cn.taroco.common.vo.UserVO;
 import cn.taroco.oauth2.server.feign.UserService;
-import cn.taroco.oauth2.server.userdetails.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +14,14 @@ import org.springframework.stereotype.Service;
  * @author liuht
  * @date 2018/7/24 17:06
  */
-@Service("userDetailService")
-public class UserDetailsServiceImpl implements UserDetailsService {
+@Service
+public class UserNameUserDetailsServiceImpl extends AbstractUserDetailService {
 
     @Autowired
     private UserService userService;
 
-    /**
-     * 通过 Username 加载用户详情
-     *
-     * @param username 用户名
-     * @return UserDetails
-     * @throws UsernameNotFoundException 用户没找到
-     */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    protected UserVO getUserVO(final String username) {
         // 查询用户信息,包含角色列表
         UserVO userVo = userService.findUserByUsername(username);
         if (userVo == null) {
@@ -40,7 +30,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (CommonConstant.DEL_FLAG.equals(userVo.getDelFlag())) {
             throw new DisabledException("用户: " + username + " 不可用");
         }
-        return new MyUserDetails(userVo);
+
+        return userVo;
     }
 
 }
