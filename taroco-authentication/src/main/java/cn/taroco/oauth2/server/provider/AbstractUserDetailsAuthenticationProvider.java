@@ -55,7 +55,7 @@ public abstract class AbstractUserDetailsAuthenticationProvider implements Authe
             try {
                 user = this.retrieveUser(username, authentication);
             } catch (UsernameNotFoundException var6) {
-                log.debug("User \'" + username + "\' not found");
+                log.error("User \'" + username + "\' not found");
                 if (this.hideUserNotFoundExceptions) {
                     throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
                 }

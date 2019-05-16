@@ -3,6 +3,8 @@ package cn.taroco.oauth2.server.config;
 import cn.taroco.common.config.TarocoOauth2Properties;
 import cn.taroco.common.redis.template.TarocoRedisRepository;
 import cn.taroco.oauth2.server.filter.MobileAuthenticationFilter;
+import cn.taroco.oauth2.server.handler.MobileLoginFailureHandler;
+import cn.taroco.oauth2.server.handler.MobileLoginSuccessHandler;
 import cn.taroco.oauth2.server.provider.MobileAuthenticationProvider;
 import cn.taroco.oauth2.server.service.MobileUserDetailsService;
 import cn.taroco.oauth2.server.service.UserNameUserDetailsServiceImpl;
@@ -42,6 +44,13 @@ public class WebSecurityConfigration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private TarocoRedisRepository redisRepository;
+
+    @Autowired
+    private MobileLoginFailureHandler mobileLoginFailureHandler;
+
+    @Autowired
+    private MobileLoginSuccessHandler mobileLoginSuccessHandler;
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -112,6 +121,8 @@ public class WebSecurityConfigration extends WebSecurityConfigurerAdapter {
     public MobileAuthenticationFilter mobileAuthenticationFilter() throws Exception {
         final MobileAuthenticationFilter filter = new MobileAuthenticationFilter();
         filter.setAuthenticationManager(authenticationManagerBean());
+        filter.setAuthenticationSuccessHandler(mobileLoginSuccessHandler);
+        filter.setAuthenticationFailureHandler(mobileLoginFailureHandler);
         return filter;
     }
 

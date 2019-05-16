@@ -41,7 +41,7 @@ public class CustomerAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        // 针对 password 模式
         if (!request.getRequestURI().equals(SecurityConstants.OAUTH_TOKEN_URL) ||
                 !request.getParameter(SecurityConstants.GRANT_TYPE).equals(SecurityConstants.PASSWORD)) {
             filterChain.doFilter(request, response);
