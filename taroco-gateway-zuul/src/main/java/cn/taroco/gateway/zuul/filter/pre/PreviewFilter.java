@@ -8,7 +8,6 @@ import com.netflix.zuul.context.RequestContext;
 import com.xiaoleilu.hutool.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -29,7 +28,7 @@ import java.nio.charset.Charset;
 @Component
 @ConditionalOnProperty(value = "security.validate.preview", havingValue = "true")
 public class PreviewFilter extends ZuulFilter {
-    private static final String TOKEN = "token";
+    private static final String OAUTH = "oauth";
 
     @Override
     public String filterType() {
@@ -45,7 +44,7 @@ public class PreviewFilter extends ZuulFilter {
     public boolean shouldFilter() {
         HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
         if (StrUtil.equalsIgnoreCase(request.getMethod(), HttpMethod.GET.name()) ||
-                StrUtil.containsIgnoreCase(request.getRequestURI(), TOKEN)){
+                StrUtil.containsIgnoreCase(request.getRequestURI(), OAUTH)){
             return false;
         }
         return true;
