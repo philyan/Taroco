@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 @Component
 @ConditionalOnProperty(value = "security.validate.preview", havingValue = "true")
 public class PreviewFilter extends ZuulFilter {
-    private static final String OAUTH = "auth";
+    private static final String OAUTH = "/auth";
 
     @Override
     public String filterType() {
