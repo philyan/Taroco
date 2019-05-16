@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 @Component
 @ConditionalOnProperty(value = "security.validate.preview", havingValue = "true")
 public class PreviewFilter extends ZuulFilter {
-    private static final String OAUTH = "oauth";
+    private static final String OAUTH = "auth";
 
     @Override
     public String filterType() {
@@ -44,7 +44,7 @@ public class PreviewFilter extends ZuulFilter {
     public boolean shouldFilter() {
         HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
         if (StrUtil.equalsIgnoreCase(request.getMethod(), HttpMethod.GET.name()) ||
-                StrUtil.containsIgnoreCase(request.getRequestURI(), OAUTH)){
+                StrUtil.startWithIgnoreCase(request.getRequestURI(), OAUTH)){
             return false;
         }
         return true;
