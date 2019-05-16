@@ -24,10 +24,6 @@
         </dependency>
         <dependency>
             <groupId>cn.taroco</groupId>
-            <artifactId>taroco-ribbon-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.taroco</groupId>
             <artifactId>taroco-redis-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
@@ -36,17 +32,33 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>HdrHistogram</artifactId>
+                    <groupId>org.hdrhistogram</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
         </dependency>
-        <!--oauth2.0-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel-zuul</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-oauth2</artifactId>
-        </dependency>
-        <!-- spring-cloud 限流 -->
-        <dependency>
-            <groupId>com.marcosbarbero.cloud</groupId>
-            <artifactId>spring-cloud-zuul-ratelimit</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>

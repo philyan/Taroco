@@ -1,8 +1,9 @@
 Nacos 8848
 服务网关 9000
 OAuth2 认证服务器 9001
+Spring Boot Admin 9002
 OAuth2 Client1 9003
 OAuth2 Client2 9004
 OAuth2 Resource 9005
+sentinel-dashboard 9006
 RBAC 权限管理 9009
-Spring Boot Admin 9002
