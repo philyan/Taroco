@@ -13,6 +13,11 @@ public interface SecurityConstants {
     String BASIC = "basic";
 
     /**
+     * basic
+     */
+    String BASIC_HEADER = "Basic ";
+
+    /**
      * client_id
      */
     String CLIENT_ID = "client_id";
@@ -98,9 +103,14 @@ public interface SecurityConstants {
     String REFRESH_TOKEN = "refresh_token";
 
     /**
-     * oauth token
+     * 传统oauth2 登录路径
      */
     String OAUTH_TOKEN_URL = "/oauth/token";
+
+    /**
+     * 手机号登录路径
+     */
+    String MOBILE_TOKEN_URL = "/oauth/mobile";
 
     /**
      * 默认的处理验证码的url前缀
@@ -155,7 +165,7 @@ public interface SecurityConstants {
             + "refresh_token_validity, additional_information, autoapprove";
 
     /**
-     *JdbcClientDetailsService 查询语句
+     * JdbcClientDetailsService 查询语句
      */
     String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS
             + " from sys_oauth_client_details";

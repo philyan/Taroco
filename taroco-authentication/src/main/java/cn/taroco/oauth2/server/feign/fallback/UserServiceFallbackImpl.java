@@ -20,27 +20,10 @@ public class UserServiceFallbackImpl implements UserService {
         return new UserVO();
     }
 
-    /**
-     * 通过手机号查询用户、角色信息
-     *
-     * @param mobile 手机号
-     * @return UserVo
-     */
     @Override
     public UserVO findUserByMobile(String mobile) {
         log.error("通过手机号查询用户:{}", mobile);
         return new UserVO();
     }
 
-    /**
-     * 根据OpenId查询用户信息
-     *
-     * @param openId openId
-     * @return UserVo
-     */
-    @Override
-    public UserVO findUserByOpenId(String openId) {
-        log.error("通过OpenId查询用户:{}", openId);
-        return new UserVO();
-    }
 }

@@ -6,14 +6,17 @@ import cn.taroco.oauth2.server.exception.CustomerAccessDeniedHandler;
 import cn.taroco.oauth2.server.exception.CustomerExceptionEntryPoint;
 import cn.taroco.oauth2.server.exception.CustomerWebResponseExceptionTranslator;
 import cn.taroco.oauth2.server.filter.CustomerAuthenticationFilter;
+import cn.taroco.oauth2.server.service.UserNameUserDetailsServiceImpl;
 import cn.taroco.oauth2.server.userdetails.MyUserDetails;
 import com.xiaoleilu.hutool.collection.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -53,7 +56,7 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
     private TarocoOauth2Properties oauth2Properties;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserNameUserDetailsServiceImpl userNameUserDetailsService;
 
     @Autowired
     private CustomerWebResponseExceptionTranslator exceptionTranslator;
@@ -108,7 +111,7 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
                 user = (MyUserDetails) principal;
             } else {
                 final String username = (String) principal;
-                user = (MyUserDetails) userDetailsService.loadUserByUsername(username);
+                user = (MyUserDetails) userNameUserDetailsService.loadUserByUsername(username);
             }
             additionalInfo.put(SecurityConstants.LICENSE_KEY, SecurityConstants.LICENSE);
             additionalInfo.put(SecurityConstants.USER_HEADER, user.getUsername());
@@ -121,6 +124,10 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
     }
 
     @Bean
+    @Lazy
+    @Scope(
+            proxyMode = ScopedProxyMode.INTERFACES
+    )
     public ClientDetailsService clientDetailsService() {
         JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
         clientDetailsService.setSelectClientDetailsSql(SecurityConstants.DEFAULT_SELECT_STATEMENT);
@@ -133,11 +140,9 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
         clients.withClientDetails(clientDetailsService());
     }
 
-    /**
-     * 授权服务器端点配置，如令牌存储，令牌自定义，用户批准和授权类型，不包括端点安全配置
-     */
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+    @Bean
+    @Lazy
+    public DefaultTokenServices defaultTokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setTokenStore(tokenStore());
@@ -148,10 +153,18 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(jwtAccessTokenConverter(), tokenEnhancer()));
         defaultTokenServices.setTokenEnhancer(tokenEnhancerChain);
 
+        return defaultTokenServices;
+    }
+
+    /**
+     * 授权服务器端点配置，如令牌存储，令牌自定义，用户批准和授权类型，不包括端点安全配置
+     */
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService)
-                .tokenServices(defaultTokenServices)
+                .userDetailsService(userNameUserDetailsService)
+                .tokenServices(defaultTokenServices())
                 .exceptionTranslator(exceptionTranslator);
     }
 
@@ -163,6 +176,7 @@ public class AuthorizationServerConfigration extends AuthorizationServerConfigur
         security
                 .tokenKeyAccess("isAuthenticated()")
                 .checkTokenAccess("permitAll()")
+                .allowFormAuthenticationForClients()
                 .authenticationEntryPoint(exceptionEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
                 .addTokenEndpointAuthenticationFilter(customerAuthenticationFilter);

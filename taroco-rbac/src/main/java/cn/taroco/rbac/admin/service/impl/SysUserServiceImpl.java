@@ -133,7 +133,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * 发送验证码
      * <p>
      * 1. 先去redis 查询是否 60S内已经发送
-     * 2. 未发送： 判断手机号是否存 ? false :产生4位数字  手机号-验证码
+     * 2. 未发送： 判断手机号是否存 ? false :产生6位数字  手机号-验证码
      * 3. 发往消息中心-》发送信息
      * 4. 保存redis
      *
@@ -145,7 +145,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         Object tempCode = redisRepository.get(CacheConstants.DEFAULT_CODE_KEY + mobile);
         if (tempCode != null) {
             log.error("用户:{}验证码未失效{}", mobile, tempCode);
-            return Response.failure("验证码未失效，请失效后再次申请");
+            return Response.failure("验证码: " + tempCode + "未失效，请失效后再次申请");
         }
 
         SysUser params = new SysUser();
@@ -153,14 +153,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         List<SysUser> userList = this.list(new QueryWrapper<>(params));
 
         if (CollectionUtils.isEmpty(userList)) {
-            log.error("根据用户手机号{}查询用户为空", mobile);
+            log.error("根据用户手机号:{}, 查询用户为空", mobile);
             return Response.failure("手机号不存在");
         }
 
-        String code = RandomUtil.randomNumbers(4);
+        String code = RandomUtil.randomNumbers(6);
         log.info("短信发送请求消息中心 -> 手机号:{} -> 验证码：{}", mobile, code);
         redisRepository.setExpire(CacheConstants.DEFAULT_CODE_KEY + mobile, code, SecurityConstants.DEFAULT_IMAGE_EXPIRE);
-        return Response.success(true);
+        return Response.success(code);
     }
 
     @Override
