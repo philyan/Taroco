@@ -20,9 +20,6 @@ spring:
         file-extension: yml
         shared-dataids: application-${spring.profiles}.yml
         namespace: 37854314-a43b-4a25-8360-01bfded9a8d1
-    sentinel:
-      transport:
-        dashboard: localhost:9006
 
 ---
 spring:
@@ -37,6 +34,3 @@ spring:
         file-extension: yml
         shared-dataids: application-${spring.profiles}.yml
         namespace: 282b0efc-75d8-488e-8c29-3037a06f64ed
-    sentinel:
-      transport:
-        dashboard: 172.31.213.39:9006
