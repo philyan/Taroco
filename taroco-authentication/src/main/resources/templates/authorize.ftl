@@ -7,7 +7,7 @@
 </head>
 <style type="text/css">
     body {
-        background-color: #DADADA;
+        background-color: #47b77d;
     }
     .title {
         font-size: 28px !important;
