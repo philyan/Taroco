@@ -89,6 +89,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.taroco</groupId>
+                <artifactId>taroco-feign-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.taroco</groupId>
                 <artifactId>taroco-log-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -1,4 +1,4 @@
-package cn.taroco.common.ribbon.feign;
+package cn.taroco.common.feign;
 
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
