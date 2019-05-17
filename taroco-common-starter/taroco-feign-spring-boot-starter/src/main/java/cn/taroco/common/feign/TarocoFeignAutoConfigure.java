@@ -1,4 +1,4 @@
-package cn.taroco.common.ribbon.feign;
+package cn.taroco.common.feign;
 
 import feign.Logger;
 import org.springframework.context.annotation.Bean;
@@ -19,11 +19,6 @@ public class TarocoFeignAutoConfigure {
     @Bean
     Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;
-    }
-
-    @Bean
-    public XlabelFeignHeaderInterceptor xlabelFeignHeaderInterceptor() {
-        return new XlabelFeignHeaderInterceptor();
     }
 
     @Bean

@@ -28,7 +28,7 @@ public class AuthenticationController {
      */
     @GetMapping("/require")
     public ModelAndView require() {
-        return new ModelAndView("ftl/login");
+        return new ModelAndView("login");
     }
 
     /**

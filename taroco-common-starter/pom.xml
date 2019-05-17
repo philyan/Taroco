@@ -13,6 +13,7 @@
 
     <modules>
         <module>taroco-redis-spring-boot-starter</module>
+        <module>taroco-feign-spring-boot-starter</module>
         <module>taroco-common-spring-boot-starter</module>
         <module>taroco-log-spring-boot-starter</module>
         <module>taroco-ribbon-spring-boot-starter</module>

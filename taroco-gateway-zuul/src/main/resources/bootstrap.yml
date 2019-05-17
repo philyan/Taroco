@@ -34,4 +34,3 @@ spring:
         file-extension: yml
         shared-dataids: application-${spring.profiles}.yml
         namespace: 282b0efc-75d8-488e-8c29-3037a06f64ed
-

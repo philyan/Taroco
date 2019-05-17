@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cn.taroco.common.ribbon.TarocoRibbonAutoConfigure
+cn.taroco.common.feign.TarocoFeignAutoConfigure

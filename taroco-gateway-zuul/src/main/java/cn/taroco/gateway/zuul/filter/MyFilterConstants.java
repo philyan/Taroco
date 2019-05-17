@@ -1,7 +1,6 @@
 package cn.taroco.gateway.zuul.filter;
 
 import cn.taroco.gateway.zuul.filter.pre.PreRequestLogFilter;
-import cn.taroco.gateway.zuul.filter.pre.XlabelRequestPreFilter;
 import com.netflix.zuul.ZuulFilter;
 
 /**
@@ -14,19 +13,9 @@ public interface MyFilterConstants {
     // ORDER constant -----------------------------------
 
     /**
-     * Filter Order for {@link XlabelRequestPreFilter#filterOrder()}
-     */
-    int PRE_REQUEST_XLABEL_ORDER = 7;
-
-    /**
      * Filter Order for {@link PreRequestLogFilter#filterOrder()}
      */
     int PRE_REQUEST_LOG_ORDER = Integer.MAX_VALUE;
-
-    /**
-     * Filter Order for {@link PreRequestLogFilter#filterOrder()}
-     */
-    int POST_REQUEST_XLABEL_ORDER = 0;
 
     // Zuul Filter TYPE constant -----------------------------------
 

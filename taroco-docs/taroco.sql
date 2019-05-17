@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50716
 File Encoding         : 65001
 
-Date: 2019-04-26 17:05:50
+Date: 2019-05-17 16:32:49
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -125,7 +125,7 @@ CREATE TABLE `sys_menu` (
   `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `del_flag` char(1) DEFAULT '0' COMMENT '0--正常 1--删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8 COMMENT='菜单权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8 COMMENT='菜单权限表';
 
 -- ----------------------------
 -- Records of sys_menu
@@ -143,6 +143,7 @@ INSERT INTO `sys_menu` VALUES ('100', '客户端管理', 'client', '', '1', 'sha
 INSERT INTO `sys_menu` VALUES ('110', '路由管理', 'route', null, '1', 'object-ungroup', '8', '2018-05-15 21:44:51', '2018-09-08 02:02:07', '0');
 INSERT INTO `sys_menu` VALUES ('111', '权限管理', 'auth', null, '1', 'universal-access', '5', '2019-04-12 16:45:54', '2019-04-12 16:47:58', '0');
 INSERT INTO `sys_menu` VALUES ('112', '服务治理', 'taroco-governance', null, '8', 'line-chart', '1', '2019-04-12 16:45:54', '2019-04-12 16:47:58', '0');
+INSERT INTO `sys_menu` VALUES ('113', 'Sentinel 控制台', 'taroco-sentinel', null, '8', 'codiepie', '3', '2019-05-17 16:24:06', '2019-05-17 16:24:16', '0');
 
 -- ----------------------------
 -- Table structure for sys_oauth_client_details
@@ -252,6 +253,7 @@ INSERT INTO `sys_role_menu` VALUES ('1', '100');
 INSERT INTO `sys_role_menu` VALUES ('1', '110');
 INSERT INTO `sys_role_menu` VALUES ('1', '111');
 INSERT INTO `sys_role_menu` VALUES ('1', '112');
+INSERT INTO `sys_role_menu` VALUES ('1', '113');
 
 -- ----------------------------
 -- Table structure for sys_role_permission

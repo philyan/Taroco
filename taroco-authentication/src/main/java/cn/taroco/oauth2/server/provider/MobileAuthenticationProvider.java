@@ -50,6 +50,8 @@ public class MobileAuthenticationProvider extends AbstractUserDetailsAuthenticat
                 log.error("Authentication failed: verifyCode does not match stored value");
                 throw new BadCredentialsException(this.messages.getMessage("MobileAuthenticationProvider.badCredentials", "Bad verifyCode"));
             }
+            // 校验成功删除验证码(验证码只能使用一次)
+            redisRepository.del(key);
         }
     }
 
