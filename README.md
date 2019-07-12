@@ -8,6 +8,7 @@
 - [配套前端地址](https://github.com/liuht777/Taroco-UI-NEW)
 - [在线文档](http://118.190.154.85:8080)
 - [演示地址](http://118.190.154.85)
+- 统一认证已经单独罗列出来并且做了升级，欢迎star [Taroco-Authentication](https://github.com/liuht777/Taroco-Authentication)
 
 ## 前言
 
